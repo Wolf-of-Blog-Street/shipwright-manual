@@ -8,3 +8,5 @@ build view.
 
 This is a deliberately scoped publication package. It does not publish the private Shipwright repository, Brain
 records, credentials, research transcripts, or runtime state.
+
+Licensed under the [MIT License](LICENSE).
