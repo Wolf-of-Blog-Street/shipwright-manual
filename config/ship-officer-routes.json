@@ -1,0 +1,276 @@
+{
+  "schema": "falcon.ship-officer-routes",
+  "schema_version": 1,
+  "ship_id": "shipwright",
+  "status": "design_not_enforced",
+  "runtime_enforced": false,
+  "warning": "This registry documents intended command and conversation topology. It is not an authorization grant and is not enforced by the current seat.message or Captain officer.order implementations.",
+  "status_vocabulary": {
+    "as_built_legacy": "A legacy route has durable runtime evidence, but is not the final locked-officer route.",
+    "configured_not_executed": "An endpoint or route is named, but delivery and execution are not proven.",
+    "target_design_not_enforced": "The route is part of the target organization and is not runtime-enforced.",
+    "needs_normalization": "Sources disagree or leave the route underspecified; do not infer authority.",
+    "unverified": "Evidence is insufficient to claim the route works."
+  },
+  "default_policy": {
+    "sibling_contact": "Route through no1.pm unless a route is explicitly listed here.",
+    "authority": "A route permits only the named purpose. It does not enlarge either seat's commission.",
+    "queue_semantics": "Queued is not delivered, working, reported, accepted, or complete.",
+    "current_gap": [
+      "ship/bridge-harness/src/schemas.mjs accepts an arbitrary string in seat.message.to",
+      "ship/bridge-harness/src/typed-tools.mjs appends seat.message without checking an adjacency allowlist",
+      "ship/captain-harness/src/tools.mjs exposes officer.order over every configured officer endpoint"
+    ]
+  },
+  "personal_staff_routes": [
+    {
+      "id": "personal-advisor-consult",
+      "counterpart": "owning officer <-> personal Advisor",
+      "purpose": "Immediate, iterative cognition and decision support",
+      "route_class": "consult",
+      "command_authority": "none",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "personal-pa-operations",
+      "counterpart": "owning officer <-> officer PA",
+      "purpose": "Records, research, scheduling, Brain operations, and bounded administration",
+      "route_class": "ops_request",
+      "command_authority": "officer directs only the officer-scoped PA office",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "personal-engineering-brief",
+      "counterpart": "owning officer <-> Personal Engineer",
+      "purpose": "Officer-specific tools and integrations",
+      "route_class": "engineering_brief",
+      "command_authority": "officer directs only the officer-scoped engineering cell",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    }
+  ],
+  "routes": [
+    {
+      "id": "flag-command",
+      "from": "commodore.tom",
+      "to": "captain.canopus",
+      "direction": "bidirectional",
+      "purpose": "Authenticated priorities, standing missions, grants, above-Captain calls, and flag reporting",
+      "route_class": "flag_channel",
+      "command_authority": "Commodore commands Captain",
+      "status": "as_built_legacy",
+      "runtime_enforced": false
+    },
+    {
+      "id": "captain-first-officer",
+      "from": "captain.canopus",
+      "to": "no1.pm",
+      "direction": "bidirectional",
+      "purpose": "Ship execution routing, department command, board truth, and integrated reporting",
+      "route_class": "command_order",
+      "command_authority": "Captain commands No1",
+      "status": "configured_not_executed",
+      "runtime_enforced": false
+    },
+    {
+      "id": "captain-science-direct",
+      "from": "captain.canopus",
+      "to": "no2.pm",
+      "direction": "bidirectional",
+      "purpose": "Direct consultation and override; ordinary Science tasking remains through No1",
+      "route_class": "science_commission",
+      "command_authority": "No1 is ordinary tasking authority; Captain has direct consult and override",
+      "status": "needs_normalization",
+      "runtime_enforced": false
+    },
+    {
+      "id": "captain-counsellor-direct",
+      "from": "captain.canopus",
+      "to": "counsellor.officer",
+      "direction": "bidirectional",
+      "purpose": "Mind-health intervention and urgent cognitive-integrity matters",
+      "route_class": "direct_consult",
+      "command_authority": "No1 retains ordinary departmental routing",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "cmo-captain-alert",
+      "from": "cmo.officer",
+      "to": "captain.canopus",
+      "direction": "upward_alert",
+      "purpose": "Whole-surface monitoring alerts, drift, defects, degradation, and waste",
+      "route_class": "monitoring_alert",
+      "command_authority": "none; CMO reports and Captain decides",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "security-captain-alert",
+      "from": "security.officer",
+      "to": "captain.canopus",
+      "direction": "upward_alert",
+      "purpose": "Security, custody, privilege, quarantine, and rogue-watch alerts",
+      "route_class": "security_alert",
+      "command_authority": "none; Security reports and Captain decides",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "captain-intelligence-called",
+      "from": "captain.canopus",
+      "to": "intelligence.officer",
+      "direction": "bidirectional_when_called",
+      "purpose": "Direct reconnaissance consultation when the Captain explicitly calls the seat",
+      "route_class": "direct_consult",
+      "command_authority": "ordinary Intelligence tasking remains through No1",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "captain-chief-engineer",
+      "from": "captain.canopus",
+      "to": "chief-engineer",
+      "direction": "bidirectional",
+      "purpose": "Ship-scale engineering relationship and factory work initiation",
+      "route_class": "command_order",
+      "command_authority": "Captain commands Chief Engineer; No1 routing needs explicit normalization",
+      "status": "needs_normalization",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-science",
+      "from": "no1.pm",
+      "to": "no2.pm",
+      "direction": "bidirectional",
+      "purpose": "Ordinary Science tasking and evidence-report return",
+      "route_class": "science_commission",
+      "command_authority": "No1 tasks Science; Captain adjudicates ship action",
+      "status": "as_built_legacy",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-intelligence",
+      "from": "no1.pm",
+      "to": "intelligence.officer",
+      "direction": "bidirectional",
+      "purpose": "Reconnaissance commissions and intelligence reports",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department under Captain",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-security",
+      "from": "no1.pm",
+      "to": "security.officer",
+      "direction": "bidirectional",
+      "purpose": "Routine security work, grants, custody, and remediation routing",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department; alerts bypass to Captain",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-operations",
+      "from": "no1.pm",
+      "to": "ops.officer",
+      "direction": "bidirectional",
+      "purpose": "Resource, budget, server, key, and operating-cadence work",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department; Captain owns resource decisions within grants",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-communications",
+      "from": "no1.pm",
+      "to": "comms.officer",
+      "direction": "bidirectional",
+      "purpose": "Crafted human-facing external communication and final review",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-tactical",
+      "from": "no1.pm",
+      "to": "tactical.officer",
+      "direction": "bidirectional",
+      "purpose": "Mission tactics and earning-opportunity development",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department; Captain chooses among options",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-counsellor",
+      "from": "no1.pm",
+      "to": "counsellor.officer",
+      "direction": "bidirectional",
+      "purpose": "Routine intervention work, cognitive-integrity findings, and remediation routing",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department; Captain retains direct intervention line",
+      "status": "needs_normalization",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-cmo",
+      "from": "no1.pm",
+      "to": "cmo.officer",
+      "direction": "bidirectional",
+      "purpose": "Monitoring work and remediation routing",
+      "route_class": "command_order",
+      "command_authority": "No1 runs the department; alerts bypass to Captain",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "no1-chief-engineer",
+      "from": "no1.pm",
+      "to": "chief-engineer",
+      "direction": "bidirectional",
+      "purpose": "Translate routed ship needs into a logged factory commission",
+      "route_class": "factory_work_order",
+      "command_authority": "Relationship to Captain's direct Chief Engineer line needs normalization",
+      "status": "needs_normalization",
+      "runtime_enforced": false
+    },
+    {
+      "id": "ops-security-resource-check",
+      "from": "ops.officer",
+      "to": "security.officer",
+      "direction": "bidirectional",
+      "purpose": "Privilege check, credential issue or revocation, budget allocation, and quarantine",
+      "route_class": "governance_check",
+      "command_authority": "Neither seat commands the other; each owns one stage of the flow",
+      "status": "target_design_not_enforced",
+      "runtime_enforced": false
+    },
+    {
+      "id": "science-counsellor-promotion",
+      "from": "no2.pm",
+      "to": "counsellor.officer",
+      "direction": "science_to_counsellor",
+      "purpose": "Legacy promotion-candidate and cognitive-integrity handoff",
+      "route_class": "evidence_handoff",
+      "command_authority": "none",
+      "status": "needs_normalization",
+      "runtime_enforced": false
+    },
+    {
+      "id": "chief-engineer-incubator-pm",
+      "from": "chief-engineer",
+      "to": "incubator.pm",
+      "direction": "bidirectional",
+      "purpose": "Logged external factory commission, evidence return, and candidate handoff",
+      "route_class": "factory_work_order",
+      "command_authority": "Incubator PM controls factory decomposition and execution",
+      "status": "configured_not_executed",
+      "runtime_enforced": false
+    }
+  ]
+}

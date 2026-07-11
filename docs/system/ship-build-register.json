@@ -1,0 +1,1541 @@
+{
+  "schema": "falcon.ship-build-register",
+  "schema_version": 1,
+  "ship_id": "shipwright",
+  "title": "Building Shipwright",
+  "subtitle": "The evidence-backed build register for the ship, its Computer, and the future Bridge.",
+  "as_of": "2026-07-11T00:37:09Z",
+  "ship_computer_connected": false,
+  "overall_percentage": null,
+  "status_note": "Static verified snapshot. The Ship Computer is not built or connected; repository evidence and precursor collectors are named explicitly.",
+  "status_axes": {
+    "artifact": {
+      "absent": "No implementation artifact exists.",
+      "design": "An implementation design exists; this is not runtime capability.",
+      "configured": "A role, route, or slot is declared; execution is not proven.",
+      "built": "Concrete code or a durable artifact exists.",
+      "accepted": "The built artifact passed its named acceptance gate."
+    },
+    "operational": {
+      "not-applicable": "This claim is documentary or structural rather than a running service.",
+      "unmanned": "A destination may exist, but no current occupant is expected to execute it.",
+      "queue-only": "A durable queue accepts work; wake, execution, and return are not automatic.",
+      "standby": "A runnable component exists but no fresh execution is currently established.",
+      "live": "Fresh, bounded execution evidence exists for the exact capability claimed.",
+      "degraded": "The capability operates with a named loss of coverage or assurance.",
+      "unknown": "Evidence is insufficient to establish current operating state."
+    },
+    "evidence": {
+      "configured": "The claim comes from declared configuration only.",
+      "reported": "An actor or document asserts the claim without independent confirmation.",
+      "recorded": "A durable boundary record exists.",
+      "receipt": "A named system returned a checkable result.",
+      "verified": "The claim passed the named tests or acceptance evidence.",
+      "unknown": "Evidence is absent, stale, contradictory, or insufficient."
+    }
+  },
+  "snapshot_metrics": [
+    {
+      "label": "Captain tools",
+      "value": "20",
+      "detail": "Typed Bridge tools; raw Read, Write, Edit, Bash, Web, Agent, skills, and plugins absent.",
+      "evidence_state": "verified"
+    },
+    {
+      "label": "Captain unit tests",
+      "value": "37 / 37",
+      "detail": "Fresh local run on 2026-07-11; all passed.",
+      "evidence_state": "receipt"
+    },
+    {
+      "label": "Captain live bench",
+      "value": "21 / 21",
+      "detail": "Historical fresh-session sample across Fable, Opus, and Sonnet; not an uptime guarantee.",
+      "evidence_state": "recorded"
+    },
+    {
+      "label": "Bridge tests",
+      "value": "19 + 1",
+      "detail": "19 passed; one Chrome-dependent modal test skipped because Chrome did not start.",
+      "evidence_state": "receipt"
+    },
+    {
+      "label": "Queued staff orders",
+      "value": "35",
+      "detail": "Precursor collector snapshot; zero correlated reports. Queue receipt is not execution.",
+      "evidence_state": "recorded"
+    },
+    {
+      "label": "Ship Computer",
+      "value": "OFFLINE",
+      "detail": "No service, canonical store, authenticated API, coverage registry, or SSE stream exists.",
+      "evidence_state": "verified"
+    }
+  ],
+  "command_lineage": [
+    "Commodore directive or standing authority",
+    "Captain-owned mission",
+    "Measurable objective",
+    "Typed route and order",
+    "Epic, task, subtask, and attempt",
+    "Evidence and report",
+    "Authorized acceptance decision"
+  ],
+  "route_contracts": [
+    {
+      "destination": "Advisor",
+      "route": "consultation",
+      "cadence": "Direct, iterative thinking loop",
+      "current": "Meridian queue exists; synchronous loop is not built."
+    },
+    {
+      "destination": "PA",
+      "route": "operations request",
+      "cadence": "Personal operations and sourced research",
+      "current": "Target Captain/officer rollout is not built."
+    },
+    {
+      "destination": "Personal Engineer",
+      "route": "engineering brief",
+      "cadence": "Bounded personal tooling and quick builds",
+      "current": "Typed placeholder exists; manager and worker loop is unmanned."
+    },
+    {
+      "destination": "Science",
+      "route": "broad commission",
+      "cadence": "Hours or days, then evidence-backed report",
+      "current": "Interim No2 route is queue-only; full S3 is not built."
+    },
+    {
+      "destination": "Chief Engineer",
+      "route": "factory work order",
+      "cadence": "Ship engineering through the external Incubator PM",
+      "current": "Chief Engineer is unmanned; cross-project delivery is not wired."
+    }
+  ],
+  "critical_path": [
+    {
+      "id": "phase-0",
+      "phase": "Phase 0",
+      "name": "Contracts and threat model",
+      "artifact_state": "design",
+      "operational_state": "not-applicable",
+      "evidence_state": "recorded",
+      "dependencies": [],
+      "gate": "Ratified schemas, transition registry, identities, routes, truth classes, RBAC, retention, custody, and fixtures reject every orphan or ambiguous authority path.",
+      "next": "Create machine-readable schemas, OpenAPI, the field-level RBAC matrix, threat model, and v1 fixtures."
+    },
+    {
+      "id": "phase-1",
+      "phase": "Phase 1",
+      "name": "Computer core and Captain vertical slice",
+      "artifact_state": "absent",
+      "operational_state": "unmanned",
+      "evidence_state": "verified",
+      "dependencies": ["phase-0"],
+      "gate": "One real Captain voyage completes authority, delivery, work, return, decision, redaction, chain verification, recovery, and external-state persistence.",
+      "next": "Build the external store, single writer, command ledger/outbox, query index, coverage service, authenticated API, and SSE."
+    },
+    {
+      "id": "phase-2",
+      "phase": "Phase 2",
+      "name": "Orders, personal cells, Science, and gateways",
+      "artifact_state": "design",
+      "operational_state": "queue-only",
+      "evidence_state": "recorded",
+      "dependencies": ["phase-1"],
+      "gate": "A personal-cell voyage and a Science voyage remain distinct end to end, preserve root mission, costs, delivery, execution, report, evidence, and acceptance.",
+      "next": "Instrument typed transport, boards, Advisors, PAs, Science, models, tools, costs, supervisors, and standing-order runs."
+    },
+    {
+      "id": "phase-3",
+      "phase": "Phase 3",
+      "name": "Workspace broker and factory route",
+      "artifact_state": "design",
+      "operational_state": "unmanned",
+      "evidence_state": "configured",
+      "dependencies": ["phase-2"],
+      "gate": "Chief Engineer to Incubator PM to isolated factory work to reviewed Shipwright landing is traceable without direct manager access or main-copy writes.",
+      "next": "Design and build the single landing broker, workspace identities, handoff adapter, native jj/test/release events, and reconciliation."
+    },
+    {
+      "id": "phase-4",
+      "phase": "Phase 4",
+      "name": "Hardening and external custody",
+      "artifact_state": "design",
+      "operational_state": "unmanned",
+      "evidence_state": "configured",
+      "dependencies": ["phase-3"],
+      "gate": "An independent verifier accepts restored history and externally held checkpoint continuity after failure and compromise drills.",
+      "next": "Add signed external checkpoints, backup/restore, rotation, retention, disk-full, partition, load, and compromised-sensor drills."
+    },
+    {
+      "id": "phase-5",
+      "phase": "Phase 5",
+      "name": "Bridge source-of-record cutover",
+      "artifact_state": "design",
+      "operational_state": "unmanned",
+      "evidence_state": "configured",
+      "dependencies": ["phase-4"],
+      "gate": "Commodore acceptance, documented rollback, parallel-run parity, and zero unexplained coverage regressions.",
+      "next": "Run Computer and legacy collectors in parallel, reconcile discrepancies, then retire duplicate collectors deliberately."
+    }
+  ],
+  "bridge_readiness_gate": {
+    "name": "Minimum gate before a real Bridge prototype",
+    "status": "not-ready",
+    "note": "The former Falcon guardian command-deck concept belongs to the Shipwright Manual. The operational Bridge will be designed from scratch after this gate produces real contracts and a real voyage fixture.",
+    "requirements": [
+      {
+        "id": "bridge-contracts",
+        "label": "Phase 0 schemas, identities, routes, transitions, truth classes, RBAC, and threat model ratified",
+        "met": false
+      },
+      {
+        "id": "bridge-store",
+        "label": "External state root, canonical writer, command revision/outbox store, event chain, verifier, and rebuildable index running",
+        "met": false
+      },
+      {
+        "id": "bridge-voyage",
+        "label": "One real directive-to-acceptance Captain voyage captured without repository telemetry writes",
+        "met": false
+      },
+      {
+        "id": "bridge-api",
+        "label": "Authenticated status, snapshot, events, correlations, missions, work, deliveries, coverage, and stream contracts operating",
+        "met": false
+      },
+      {
+        "id": "bridge-recovery",
+        "label": "Redaction, RBAC, replay, deduplication, crash recovery, and visible unknown/gap handling pass",
+        "met": false
+      },
+      {
+        "id": "bridge-fixture",
+        "label": "The captured voyage becomes the versioned frontend fixture and acceptance baseline",
+        "met": false
+      }
+    ]
+  },
+  "groups": [
+    {
+      "id": "keel",
+      "name": "Keel and governance",
+      "summary": "The proven transport, first cell, spend floor, and remaining S1/S2 work.",
+      "claims": [
+        {
+          "id": "s1a-locked-transport",
+          "capability": "S1a locked transport",
+          "owner": "Captain / engineering",
+          "artifact_state": "accepted",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Replacement prompt, complete built-in tool strip, typed MCP surface, model and effort pins, and subscription authentication were proven.",
+          "dependencies": [],
+          "blockers": [],
+          "next_gate": "Retain as a regression fixture for every officer harness.",
+          "freshness": "Accepted 2026-07-09",
+          "evidence": [
+            {
+              "label": "Locked transport findings",
+              "path": "ship/bridge-harness/FINDINGS.md",
+              "kind": "report"
+            },
+            {
+              "label": "Ship organization design",
+              "path": "docs/design/ship-org-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "s1b-ghost-officer",
+          "capability": "S1b ghost officer",
+          "owner": "Captain / engineering",
+          "artifact_state": "accepted",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Contract, injection, crash/resume, and idempotency behavior ran against disposable stores without operational authority.",
+          "dependencies": ["s1a-locked-transport"],
+          "blockers": [],
+          "next_gate": "Keep the full adversarial suite in the officer release gate.",
+          "freshness": "Accepted 2026-07-09",
+          "evidence": [
+            {
+              "label": "S1b findings",
+              "path": "ship/bridge-harness/FINDINGS-s1b.md",
+              "kind": "report"
+            },
+            {
+              "label": "Harness tests",
+              "path": "ship/bridge-harness/test",
+              "kind": "tests"
+            }
+          ]
+        },
+        {
+          "id": "s1c-meridian-cell",
+          "capability": "S1c Meridian and Advisor PA cell",
+          "owner": "Captain / Meridian",
+          "artifact_state": "accepted",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Meridian's five-tool locked seat, separate Brain, PA drain, and first PA-sealed deliberation passed the named gate.",
+          "dependencies": ["s1a-locked-transport", "s1b-ghost-officer"],
+          "blockers": ["Captain-to-Advisor synchronous conversation remains unbuilt.", "Off-runner Advisor cost data remains incomplete."],
+          "next_gate": "Wire a correlated wake, iterative follow-up, and answer-return loop without adding command authority.",
+          "freshness": "Decision 71, 2026-07-10",
+          "evidence": [
+            {
+              "label": "S1c implementation design",
+              "path": "docs/design/ship-org-s1c-cut.md",
+              "kind": "design"
+            },
+            {
+              "label": "Advisor pressure test",
+              "path": "docs/reviews/advisor-v2-pressure-test.md",
+              "kind": "sealed report"
+            }
+          ]
+        },
+        {
+          "id": "spend-governance",
+          "capability": "S-GOV spend governance",
+          "owner": "Interim No1 / future Ops and Security",
+          "artifact_state": "accepted",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Grant registry, key inventory, cost ledger, roll-up, spend watch, and three named gates are built; the permanent Ops and Security seats remain unmanned.",
+          "dependencies": [],
+          "blockers": ["Permanent officer custody and watch ownership are not staffed."],
+          "next_gate": "Transfer custody and monitoring through the S2 officer handoff without losing the single-writer floor.",
+          "freshness": "Shipped 2026-07-09",
+          "evidence": [
+            {
+              "label": "Implemented S-GOV design",
+              "path": "docs/design/implemented/ship-org-sgov.md",
+              "kind": "implemented design"
+            },
+            {
+              "label": "Spend governance manual",
+              "path": "docs/system/spend-governance.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Cost ledger",
+              "path": "project-management/ledgers/costs.jsonl",
+              "kind": "record"
+            }
+          ]
+        },
+        {
+          "id": "s1d-ultra-smoke",
+          "capability": "S1d Sonnet Ultra crew smoke",
+          "owner": "Engineering",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The 12-plus-agent pinned sweep is specified and remains a gated assumption rather than proven crew capacity.",
+          "dependencies": ["s1b-ghost-officer"],
+          "blockers": ["Board task remains to-do."],
+          "next_gate": "Run the pinned sweep and preserve per-seat evidence, failures, costs, and final adjudication.",
+          "freshness": "Board verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Project board",
+              "path": "project-management/project.sqlite",
+              "kind": "advisory board"
+            }
+          ]
+        },
+        {
+          "id": "s2-officer-handoff",
+          "capability": "S2 No1 and officer handoff",
+          "owner": "Captain / No1",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The read-only observer through writer-token epoch ladder is designed; the new No1, Chief Engineer line, and repeatable kit are not built.",
+          "dependencies": ["s1d-ultra-smoke", "spend-governance"],
+          "blockers": ["Writer-token handoff has not run.", "Chief Engineer is unmanned."],
+          "next_gate": "Complete every ladder rung while proving one board writer at every instant.",
+          "freshness": "Board verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Ship organization design, build sequence",
+              "path": "docs/design/ship-org-design.md",
+              "kind": "design"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command-seats",
+      "name": "Command seats and ship sections",
+      "summary": "Rank, role, runtime, and evidence remain separate; a configured seat is not a staffed seat.",
+      "claims": [
+        {
+          "id": "commodore-seat",
+          "capability": "Commodore",
+          "owner": "Tom Belfort",
+          "artifact_state": "accepted",
+          "operational_state": "live",
+          "evidence_state": "recorded",
+          "summary": "Authenticated human flag authority and strategic command source.",
+          "dependencies": [],
+          "blockers": [],
+          "next_gate": "Preserve authenticated directives and standing authority in the future Command Graph.",
+          "freshness": "Current command structure",
+          "evidence": [
+            {
+              "label": "Ship organization design",
+              "path": "docs/design/ship-org-design.md",
+              "kind": "design of record"
+            }
+          ]
+        },
+        {
+          "id": "captain-cockpit",
+          "capability": "Canopus, Captain cockpit",
+          "owner": "Captain",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Three model-specific launchers plus the default alias boot a replacement-prompt Agent SDK runtime with 20 typed tools, private board, current, scratchpad, Brain, staff queues, provenance instrumentation, and bounded integrity-checked Captain Shipbook access.",
+          "dependencies": ["s1a-locked-transport"],
+          "blockers": ["Staff queues do not wake recipients automatically.", "No instrumented Captain turn event stream has started.", "No production S6 migration."],
+          "next_gate": "Run a sustained instrumented watch with correlated staff returns and no false execution claims.",
+          "freshness": "37/37 local tests passed 2026-07-11",
+          "evidence": [
+            {
+              "label": "Captain harness manual",
+              "path": "docs/system/captain-harness-manual.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Captain harness source",
+              "path": "ship/captain-harness",
+              "kind": "code"
+            },
+            {
+              "label": "Captain harness tests",
+              "path": "ship/captain-harness/test",
+              "kind": "tests"
+            }
+          ]
+        },
+        {
+          "id": "no1-seat",
+          "capability": "No1, First Officer",
+          "owner": "Captain",
+          "artifact_state": "configured",
+          "operational_state": "standby",
+          "evidence_state": "recorded",
+          "summary": "An interim resumable No1 and local floor records exist. The target locked Commander seat and writer-token handoff are S2 work.",
+          "dependencies": ["s2-officer-handoff"],
+          "blockers": ["Target No1 harness not built.", "Current-session liveness is not established by historical registry state."],
+          "next_gate": "Complete the S2 handoff and prove board authority, wake, report, and continuity.",
+          "freshness": "No fresh active turn at audit",
+          "evidence": [
+            {
+              "label": "No1 current",
+              "path": "project-management/CURRENT/no1-current.md",
+              "kind": "current"
+            }
+          ]
+        },
+        {
+          "id": "science-seat",
+          "capability": "Science Officer / No2",
+          "owner": "Captain",
+          "artifact_state": "configured",
+          "operational_state": "queue-only",
+          "evidence_state": "recorded",
+          "summary": "An interim No2 route accepts broad commissions, but it does not auto-wake or return a correlated report; the full panel, council, and Ultra S3 department is not built.",
+          "dependencies": ["phase-2"],
+          "blockers": ["No automatic wake/report loop.", "No full S3 evidence pipeline."],
+          "next_gate": "Complete one hours-or-days Science voyage with sourced evidence, correlation, and Captain acceptance.",
+          "freshness": "Queue state verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Science board",
+              "path": "project-management/science/science-board.md",
+              "kind": "advisory record"
+            },
+            {
+              "label": "Captain routing manual",
+              "path": "docs/system/captain-harness-manual.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "intelligence-seat",
+          "capability": "Intelligence",
+          "owner": "No1",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The reconnaissance pyramid and research corpus are designed; the S4 officer, fetch pipeline, and injection-safe provenance path are not built.",
+          "dependencies": ["phase-2"],
+          "blockers": ["No manned officer.", "Fetch sanitation and source provenance require implementation."],
+          "next_gate": "Build and test an evidence-preserving reconnaissance voyage.",
+          "freshness": "Design snapshot 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship manual",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "security-seat",
+          "capability": "Security",
+          "owner": "No1",
+          "artifact_state": "built",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "Security instruments exist through S-GOV, but the commissioned Security Officer is not staffed; interim custody remains outside the target seat.",
+          "dependencies": ["spend-governance", "s2-officer-handoff"],
+          "blockers": ["No Security Officer occupant.", "Target officer harness and personal cell absent."],
+          "next_gate": "Staff the seat and transfer custody through an audited handoff.",
+          "freshness": "Instruments verified 2026-07-09",
+          "evidence": [
+            {
+              "label": "Grant registry",
+              "path": "project-management/registry/grants.md",
+              "kind": "record"
+            },
+            {
+              "label": "Inventory",
+              "path": "project-management/registry/inventory.md",
+              "kind": "record"
+            }
+          ]
+        },
+        {
+          "id": "ops-seat",
+          "capability": "Operations",
+          "owner": "No1",
+          "artifact_state": "built",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "Cost, roll-up, and watch instruments exist; the permanent Operations Officer and complete operational department are not staffed.",
+          "dependencies": ["spend-governance", "s2-officer-handoff"],
+          "blockers": ["No Operations Officer occupant."],
+          "next_gate": "Staff the seat and prove cost, resource, and service operations during a live voyage.",
+          "freshness": "Instruments verified 2026-07-09",
+          "evidence": [
+            {
+              "label": "Spend governance manual",
+              "path": "docs/system/spend-governance.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "comms-seat",
+          "capability": "Communications",
+          "owner": "No1",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The seat is explicitly deferred until the first sustained external-output mission; only chartered carve-outs exist now.",
+          "dependencies": ["s2-officer-handoff"],
+          "blockers": ["Activation trigger has not fired.", "No occupant or harness."],
+          "next_gate": "Stand up at or before the first sustained external-output mission and prove outbound review and provenance.",
+          "freshness": "Design snapshot 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship organization design",
+              "path": "docs/design/ship-org-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "tactical-seat",
+          "capability": "Tactical",
+          "owner": "No1",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The seat is deferred behind staffed Operations and Security custody; no runtime capability is claimed.",
+          "dependencies": ["security-seat", "ops-seat"],
+          "blockers": ["Operations and Security are unmanned."],
+          "next_gate": "Ratify a mission need and activate only after the custody gate is staffed.",
+          "freshness": "Design snapshot 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship manual",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "counsellor-seat",
+          "capability": "Counsellor / Doctor",
+          "owner": "No1",
+          "artifact_state": "configured",
+          "operational_state": "standby",
+          "evidence_state": "recorded",
+          "summary": "A legacy resumable Doctor seat and current exist; the target S5 locked Counsellor with complete reach and intervention mechanics is not built.",
+          "dependencies": ["phase-2"],
+          "blockers": ["Target S5 harness and reach mechanics absent."],
+          "next_gate": "Prove bounded intervention, records, escalation, and separation from CMO detection.",
+          "freshness": "No fresh active turn at audit",
+          "evidence": [
+            {
+              "label": "Doctor current",
+              "path": "project-management/CURRENT/doctor-current.md",
+              "kind": "current"
+            }
+          ]
+        },
+        {
+          "id": "cmo-seat",
+          "capability": "Chief Medical Officer",
+          "owner": "No1",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The system-health and observability role is designed separately from Counsellor treatment; the seat, privacy matrix, and complete observability surface do not exist.",
+          "dependencies": ["phase-2", "phase-1"],
+          "blockers": ["Ship Computer observability is absent.", "Field-level privacy policy remains unratified."],
+          "next_gate": "Ratify privacy scope and prove detection against a real, permission-filtered event surface.",
+          "freshness": "Design snapshot 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship Computer design",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "chief-engineer-seat",
+          "capability": "Chief Engineer",
+          "owner": "Captain",
+          "artifact_state": "configured",
+          "operational_state": "unmanned",
+          "evidence_state": "recorded",
+          "summary": "A typed destination exists, but no commissioned occupant or wake/report loop consumes it. The Chief Engineer is distinct from the Incubator PM.",
+          "dependencies": ["s2-officer-handoff", "phase-3"],
+          "blockers": ["No occupant.", "No cross-project handoff adapter.", "No correlated factory return."],
+          "next_gate": "Man the seat and prove one logged handoff and evidence-backed return through the distinct Incubator PM.",
+          "freshness": "Queue endpoint verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Ship manual, engineering topology",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Ship Computer engineering handoff",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "personal-cells",
+      "name": "Personal cells",
+      "summary": "Every Captain and commissioned officer eventually receives Thinking, Operations, and Engineering without confusing personal staff with ship departments.",
+      "claims": [
+        {
+          "id": "captain-advisor",
+          "capability": "Captain Advisor / mini-Science",
+          "owner": "Captain",
+          "artifact_state": "built",
+          "operational_state": "queue-only",
+          "evidence_state": "verified",
+          "summary": "Meridian's narrow locked seat is proven. The target direct conversational loop, own board, own scratchpad, and thinking-team orchestration are incomplete.",
+          "dependencies": ["s1c-meridian-cell", "phase-2"],
+          "blockers": ["Consult does not wake or return synchronously.", "Target Advisor board and thinking-team tools absent."],
+          "next_gate": "Complete a correlated multi-turn thought loop and preserve thread, cost, and answer receipt.",
+          "freshness": "Precursor accepted 2026-07-10",
+          "evidence": [
+            {
+              "label": "Personal-department configuration",
+              "path": "config/ship-personal-departments.json",
+              "kind": "target configuration"
+            }
+          ]
+        },
+        {
+          "id": "captain-thinking-team",
+          "capability": "Advisor thinking partners",
+          "owner": "Captain Advisor",
+          "artifact_state": "configured",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "Opus, Fable, GLM, and Terra candidate slots are declared disabled. No slot funding, custom harness, web boundary, board, or live orchestration exists.",
+          "dependencies": ["captain-advisor", "phase-2"],
+          "blockers": ["All candidate slots disabled.", "Harness and grants unratified."],
+          "next_gate": "Ratify a bounded per-ship roster and prove specialization, parallel critique, judging, and synthesis within budget.",
+          "freshness": "Configuration verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Personal-department configuration",
+              "path": "config/ship-personal-departments.json",
+              "kind": "configuration"
+            }
+          ]
+        },
+        {
+          "id": "captain-pa",
+          "capability": "Captain PA / mini-Ops",
+          "owner": "Captain",
+          "artifact_state": "configured",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "The Captain PA route is a target. Meridian's PA is a separate live precursor and does not prove the Captain/officer PA rollout.",
+          "dependencies": ["phase-2"],
+          "blockers": ["No Captain PA occupant or operator team.", "No officer-scoped human-brain rollout."],
+          "next_gate": "Prove one bounded research or operations request through the Captain PA and its team with receipts and Brain namespace isolation.",
+          "freshness": "Target configuration 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship manual, PA contract",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "meridian-pa",
+          "capability": "Meridian's PA precursor",
+          "owner": "Meridian",
+          "artifact_state": "accepted",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "The fenced PA completed stage, ratify, Brain write, verbatim land, and seal; it is not the universal officer PA kit.",
+          "dependencies": ["s1c-meridian-cell"],
+          "blockers": ["Interim permission fence remains migration debt."],
+          "next_gate": "Replace the interim fence with the final posture and retain fail-closed negative tests.",
+          "freshness": "Accepted 2026-07-10",
+          "evidence": [
+            {
+              "label": "PA lane implementation",
+              "path": "ship/bridge-harness/pa/pa-lane.mjs",
+              "kind": "code"
+            }
+          ]
+        },
+        {
+          "id": "captain-personal-engineer",
+          "capability": "Captain Personal Engineer / mini-Engineering",
+          "owner": "Captain",
+          "artifact_state": "configured",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "A typed placeholder route exists. No Lieutenant manager, officer-scoped board, isolated worker pool, review loop, or report return is live.",
+          "dependencies": ["phase-2", "phase-3"],
+          "blockers": ["Manager pattern not instantiated.", "Single landing broker absent."],
+          "next_gate": "Build one bounded personal tool through a manager and isolated Ensign, then independently verify and return it.",
+          "freshness": "Target configuration 2026-07-10",
+          "evidence": [
+            {
+              "label": "Personal-department configuration",
+              "path": "config/ship-personal-departments.json",
+              "kind": "configuration"
+            }
+          ]
+        },
+        {
+          "id": "officer-cell-rollout",
+          "capability": "Repeated officer personal-cell rollout",
+          "owner": "Captain / No1",
+          "artifact_state": "configured",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "Eleven Captain/officer cell declarations exist. No end-to-end repeatable kit, per-seat slot system, wake loop, namespace enforcement, or full rollout exists.",
+          "dependencies": ["captain-thinking-team", "captain-pa", "captain-personal-engineer"],
+          "blockers": ["The Captain template itself is incomplete.", "No rollout acceptance suite."],
+          "next_gate": "Finish and prove the Captain template, then roll out one officer at a time with negative cross-namespace tests.",
+          "freshness": "Configuration verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Personal-department configuration",
+              "path": "config/ship-personal-departments.json",
+              "kind": "configuration"
+            },
+            {
+              "label": "Ship manual, personal cell",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "factory",
+      "name": "Engineering and factory route",
+      "summary": "Personal engineering, Shipwright's local floor, and the external Incubator are three distinct boundaries.",
+      "claims": [
+        {
+          "id": "local-execution-floor",
+          "capability": "Shipwright local execution floor",
+          "owner": "Interim No1 / project managers",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "recorded",
+          "summary": "The repository has ten configured manager roles, worker types, boards, run records, panel artifacts, and a proven manager-worker pattern. Current activity must be established from fresh runner evidence, not configuration.",
+          "dependencies": [],
+          "blockers": ["This floor is not the Chief Engineer and not the external Incubator PM."],
+          "next_gate": "Migrate native supervisor and board events into the Ship Computer without changing command boundaries.",
+          "freshness": "Artifacts inspected 2026-07-11",
+          "evidence": [
+            {
+              "label": "Agent roster",
+              "path": "config/agents.json",
+              "kind": "configuration"
+            },
+            {
+              "label": "Manager boards",
+              "path": "project-management/boards",
+              "kind": "records"
+            },
+            {
+              "label": "Run records",
+              "path": "project-management/runs",
+              "kind": "records"
+            }
+          ]
+        },
+        {
+          "id": "incubator-factory",
+          "capability": "External Incubator PM and factory",
+          "owner": "Incubator PM",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "reported",
+          "summary": "The external project and its distinct PM/factory exist and are human-loadable. Shipwright has no commissioned automatic line into its managers.",
+          "dependencies": [],
+          "blockers": ["No Shipwright-owned cross-project receipt or handoff adapter."],
+          "next_gate": "Prove a typed Chief Engineer handoff without direct Shipwright access to Incubator managers.",
+          "freshness": "Boundary recorded 2026-07-10",
+          "evidence": [
+            {
+              "label": "Ship manual, external factory",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "chief-engineer-factory-route",
+          "capability": "Chief Engineer to Incubator PM route",
+          "owner": "Chief Engineer",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "The command boundary and implementation package are specified. There is no live delivery, receipt, build return, acceptance report, or landing correlation.",
+          "dependencies": ["chief-engineer-seat", "incubator-factory", "phase-3"],
+          "blockers": ["Chief Engineer unmanned.", "Cross-project adapter absent.", "Landing broker absent."],
+          "next_gate": "Trace one real design package through PM acceptance, isolated build, evidence return, Chief Engineer review, and trusted landing.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Ship Computer engineering handoff",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "workspace-isolation",
+          "capability": "Per-agent isolated write workspaces",
+          "owner": "Chief Engineer / landing broker",
+          "artifact_state": "configured",
+          "operational_state": "degraded",
+          "evidence_state": "recorded",
+          "summary": "The target forbids AI write access to the main copy and requires one isolated jj workspace per writer. Existing shared-working-copy and PA-sealing paths remain migration debt.",
+          "dependencies": ["phase-3"],
+          "blockers": ["Policy is not enforced end to end.", "Broker identity, custody, schema, failover, and negative tests are absent."],
+          "next_gate": "Build the broker and prove main-copy denial, serialized integration, cleanup, and recovery.",
+          "freshness": "Configuration and gap verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Personal-department workspace policy",
+              "path": "config/ship-personal-departments.json",
+              "kind": "configuration"
+            },
+            {
+              "label": "VCS and release model",
+              "path": "docs/system/vcs-release-model.md",
+              "kind": "manual"
+            }
+          ]
+        },
+        {
+          "id": "landing-broker",
+          "capability": "Single trusted landing broker",
+          "owner": "Unassigned external custody",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No design of record or implementation proves a single broker can validate scope, tests, evidence, change identity, serialization, and cleanup.",
+          "dependencies": ["phase-3", "workspace-isolation"],
+          "blockers": ["Owner and custody unratified.", "No schemas, queue, failover, or tests."],
+          "next_gate": "Ratify the design and run positive, negative, crash, and custody-loss fixtures.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Ship manual readiness map",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command-graph",
+      "name": "Command Graph and work flow",
+      "summary": "Authority, execution, and return are distinct planes; current queues are precursors, not the canonical graph.",
+      "claims": [
+        {
+          "id": "flat-staff-queues",
+          "capability": "Current typed staff queues",
+          "owner": "Captain harness",
+          "artifact_state": "built",
+          "operational_state": "queue-only",
+          "evidence_state": "recorded",
+          "summary": "Recipient-specific JSONL inboxes accept bounded envelopes and return IDs. At the audit snapshot, 35 orders were queued and none had a correlated report.",
+          "dependencies": ["captain-cockpit"],
+          "blockers": ["No automatic wake.", "No durable delivery acknowledgement.", "Latest report lookup is not envelope-addressed."],
+          "next_gate": "Move envelope creation, revision, delivery, ack, report, and acceptance into the transactional ledger.",
+          "freshness": "Collector snapshot 2026-07-11",
+          "evidence": [
+            {
+              "label": "Captain staff implementation",
+              "path": "ship/captain-harness/src/staff.mjs",
+              "kind": "code"
+            },
+            {
+              "label": "Staff tests",
+              "path": "ship/captain-harness/test/staff.test.mjs",
+              "kind": "tests"
+            }
+          ]
+        },
+        {
+          "id": "canonical-command-graph",
+          "capability": "Canonical no-loss Command Graph",
+          "owner": "Ship Computer",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No canonical directive, standing order, mission, objective, order, execution, return, and acceptance revision ledger exists.",
+          "dependencies": ["phase-0", "phase-1"],
+          "blockers": ["Schemas and transition registry unratified.", "Command store and writer absent."],
+          "next_gate": "Implement one primary parent, one Captain-owned root mission, typed transitions, immutable revisions, and lineage audits.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Command Graph specification",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "standing-order-runs",
+          "capability": "Versioned standing-order definitions and runs",
+          "owner": "Ship Computer / Captain",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "There is no versioned definition, occurrence key, trigger ledger, missed-trigger detection, duplicate suppression, or run outcome store.",
+          "dependencies": ["canonical-command-graph"],
+          "blockers": ["Command ledger absent."],
+          "next_gate": "Pass activation, hold, revocation, expiry, recurrence, duplicate, missed-trigger, and mission-attachment fixtures.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Standing-order design",
+              "path": "docs/design/standing-orders.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "board-projections",
+          "capability": "Rebuildable officer and department board projections",
+          "owner": "Ship Computer projectors",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "Current SQLite boards are advisory records. They are not projections from immutable command revisions and cannot create authority.",
+          "dependencies": ["canonical-command-graph"],
+          "blockers": ["No ledger sequence, row digest, transactional outbox, or reconciliation."],
+          "next_gate": "Project open work into destination boards and detect missing, extra, and divergent rows.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Board model",
+              "path": "docs/system/board-model.md",
+              "kind": "current model"
+            },
+            {
+              "label": "Command projection design",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "computer-api",
+      "name": "Ship Computer and API",
+      "summary": "Current repository collectors are migration precursors. Every canonical Computer component below is still a target.",
+      "claims": [
+        {
+          "id": "legacy-bridge-normalizer",
+          "capability": "Current Bridge normalizer and local API",
+          "owner": "Shipwright local Bridge",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "The read-mostly local server normalizes repository ledgers, queues, boards, runner records, Brain mtimes, and topology into snapshot, event, order, actor, and trace views.",
+          "dependencies": [],
+          "blockers": ["No authentication or RBAC.", "No canonical store.", "No SSE.", "Mutable heterogeneous sources.", "Two local POST routes remain outside the target command API."],
+          "next_gate": "Keep it behind a migration feature flag and compare against native Computer projections before retirement.",
+          "freshness": "19 tests passed; one browser test skipped 2026-07-11",
+          "evidence": [
+            {
+              "label": "Bridge server",
+              "path": "src/bridge/bridge-server.mjs",
+              "kind": "code"
+            },
+            {
+              "label": "Bridge provenance normalizer",
+              "path": "src/bridge/provenance.mjs",
+              "kind": "code"
+            },
+            {
+              "label": "Bridge tests",
+              "path": "src/bridge",
+              "kind": "tests and code"
+            }
+          ]
+        },
+        {
+          "id": "project-dashboard-api",
+          "capability": "Project dashboard API precursor",
+          "owner": "Project management system",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "recorded",
+          "summary": "A separate read-only localhost API exposes board, VCS, manager, panel, and agent state with ETag polling and jailed document reads. It is not the Ship Computer API.",
+          "dependencies": [],
+          "blockers": ["Repository-scoped collector, not canonical ship telemetry.", "No Ship Computer identities, ingest, command transactions, or SSE."],
+          "next_gate": "Reuse bounded collectors and fixtures where valid; do not preserve its API as the target contract by accident.",
+          "freshness": "As-built contract inspected 2026-07-11",
+          "evidence": [
+            {
+              "label": "Dashboard API manual",
+              "path": "docs/system/dashboard-api.md",
+              "kind": "as-built contract"
+            }
+          ]
+        },
+        {
+          "id": "computer-external-store",
+          "capability": "External canonical event and command store",
+          "owner": "Ship Computer service",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No external state root, append-only segments, command SQLite, query index, spool, quarantine, runtime registry, or service account exists.",
+          "dependencies": ["phase-0"],
+          "blockers": ["Storage, retention, encryption, key custody, and migration contracts unimplemented."],
+          "next_gate": "Create mode-restricted external state and prove append, fsync, replay, index rebuild, and restore.",
+          "freshness": "Filesystem absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "External store specification",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "computer-single-writer",
+          "capability": "Canonical validator, redactor, deduplicator, and chain writer",
+          "owner": "Ship Computer service",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "The single accepted-observation writer and its deterministic append transaction are not implemented.",
+          "dependencies": ["computer-external-store"],
+          "blockers": ["No service process, schema registry, checkpoint format, or startup verifier."],
+          "next_gate": "Pass duplicate, conflicting duplicate, crash-before/after-sync, invalid-head, and closed-segment fixtures.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Writer and integrity specification",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "sensor-ingestion",
+          "capability": "Authenticated sensor ingestion and durable spools",
+          "owner": "Ship Computer sensors",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No per-sensor credentials, ingest endpoint, producer policy, redaction intake, durable replay spool, backpressure, or quarantine operates.",
+          "dependencies": ["computer-single-writer"],
+          "blockers": ["Sensor inventory and credential plan not ratified."],
+          "next_gate": "Instrument the Captain first, then prove at-least-once replay and fail-closed side effects under Computer outage.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Sensor specification",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "computer-query-api",
+          "capability": "Authenticated query, command, and ingest API",
+          "owner": "Ship Computer service",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "The `/api/v1` status, snapshot, event, correlation, actor, mission, standing order, work, delivery, task, workspace, cost, coverage, command transaction, and ingest contracts are design only.",
+          "dependencies": ["computer-single-writer", "canonical-command-graph", "sensor-ingestion"],
+          "blockers": ["No OpenAPI, identity broker, authorization engine, or service."],
+          "next_gate": "Generate a machine-readable contract and pass field-scope, cursor-binding, idempotency, and cross-capability denial tests.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "API specification",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "computer-live-stream",
+          "capability": "Authorized SSE stream",
+          "owner": "Ship Computer service",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "There is no accepted-sequence SSE channel, authorized compact delta, resume window, snapshot-required fallback, or degraded polling state.",
+          "dependencies": ["computer-query-api"],
+          "blockers": ["Canonical accepted sequence and query authorization absent."],
+          "next_gate": "Prove resume, scope filtering, heartbeat semantics, stream expiry, and bounded polling fallback.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "SSE contract",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "coverage-registry",
+          "capability": "Sensor registry and coverage health",
+          "owner": "Ship Computer service",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No authoritative registry identifies expected sensors, owners, last-seen sequence, lag, failure, exclusions, or blind spots.",
+          "dependencies": ["sensor-ingestion"],
+          "blockers": ["Required inventory and freshness policies not machine-readable."],
+          "next_gate": "Make every expected sensor and every intentional exclusion visible, testable, and queryable.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Coverage design",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "computer-rbac-redaction",
+          "capability": "Field-level RBAC and redaction",
+          "owner": "Ship Computer security",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "recorded",
+          "summary": "Initial role profiles and redaction rules are written. The field matrix, credentials, policy engine, secret corpus, privacy decisions, and adversarial proof are not ratified or built.",
+          "dependencies": ["phase-0", "computer-query-api"],
+          "blockers": ["Commodore, Captain, Security, CMO, and personal-cognition field scopes remain unresolved."],
+          "next_gate": "Ratify exact fields per capability and prove secrets and narrower-role content never reach store, response, log, or HTML.",
+          "freshness": "Design inspected 2026-07-11",
+          "evidence": [
+            {
+              "label": "RBAC and redaction design",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "provenance",
+      "name": "Provenance and observable truth",
+      "summary": "Evidence classes must stay visible; recorded bytes do not prove every underlying claim.",
+      "claims": [
+        {
+          "id": "captain-provenance-code",
+          "capability": "Captain observable turn and tool provenance",
+          "owner": "Captain harness",
+          "artifact_state": "built",
+          "operational_state": "standby",
+          "evidence_state": "verified",
+          "summary": "Mode-restricted, redacted, correlated, hash-chained provenance code and tests exist for turns, providers, tools, completion, refusal, and uncertain audit failure.",
+          "dependencies": ["captain-cockpit"],
+          "blockers": ["No real `events.jsonl` has been produced by an instrumented Captain turn."],
+          "next_gate": "Run the next live Captain watch through instrumentation and verify the resulting chain independently.",
+          "freshness": "Tests passed 2026-07-11; stream not started",
+          "evidence": [
+            {
+              "label": "Captain provenance implementation",
+              "path": "ship/captain-harness/src/provenance.mjs",
+              "kind": "code"
+            },
+            {
+              "label": "Captain provenance tests",
+              "path": "ship/captain-harness/test/provenance.test.mjs",
+              "kind": "tests"
+            }
+          ]
+        },
+        {
+          "id": "captain-event-stream",
+          "capability": "Live Captain event stream",
+          "owner": "Captain harness",
+          "artifact_state": "absent",
+          "operational_state": "unknown",
+          "evidence_state": "verified",
+          "summary": "The expected `project-management/bridge/captain/events.jsonl` file is absent; chain status is not-started and historical activity is not backfilled.",
+          "dependencies": ["captain-provenance-code"],
+          "blockers": ["No instrumented live turn has emitted the file."],
+          "next_gate": "Capture one full turn and show valid count, head hash, correlations, redactions, and coverage age.",
+          "freshness": "Filesystem verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Captain bridge state directory",
+              "path": "project-management/bridge/captain",
+              "kind": "state directory"
+            }
+          ]
+        },
+        {
+          "id": "legacy-provenance-projection",
+          "capability": "Legacy repository-source provenance projection",
+          "owner": "Current Bridge",
+          "artifact_state": "built",
+          "operational_state": "degraded",
+          "evidence_state": "recorded",
+          "summary": "The current collector labels recorded, derived, and configured events across queues, runner artifacts, panels, costs, Brain mtimes, and state writes. It is useful but incomplete and mutable.",
+          "dependencies": ["legacy-bridge-normalizer"],
+          "blockers": ["No authenticated producers.", "No immutable accepted sequence.", "Brain events are mtime-derived.", "Repository sources can drift."],
+          "next_gate": "Treat each collector as a versioned migration sensor and replace it with native emitters after parity tests.",
+          "freshness": "349-event precursor snapshot 2026-07-11",
+          "evidence": [
+            {
+              "label": "Bridge provenance normalizer",
+              "path": "src/bridge/provenance.mjs",
+              "kind": "code"
+            }
+          ]
+        },
+        {
+          "id": "external-checkpoints",
+          "capability": "Externally held signed checkpoints",
+          "owner": "External custodian",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "No external checkpoint custody prevents a fully compromised local service account from rewriting retained history.",
+          "dependencies": ["computer-single-writer", "phase-4"],
+          "blockers": ["Custodian, signing keys, publication cadence, and verifier unratified."],
+          "next_gate": "Publish and restore across an externally held chain head, then verify continuity independently.",
+          "freshness": "Absence verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Checkpoint design",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "manuals",
+      "name": "Manuals and role knowledge",
+      "summary": "The human, Captain, and department views must share facts without sharing the same reading depth.",
+      "claims": [
+        {
+          "id": "human-ship-manual",
+          "capability": "Full human Shipwright Manual",
+          "owner": "Captain / documentation",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "verified",
+          "summary": "A consolidated Markdown manual and interactive HTML companion exist, covering command, seats, personal cells, factory, access, provenance, Computer, graph, readiness, and the complete Captain/officer manual library.",
+          "dependencies": [],
+          "blockers": ["The HTML companion is hand-maintained and can drift from the Markdown source and generated build register."],
+          "next_gate": "Add a structural drift check for the HTML companion while keeping the build register and Shipbook checks in every documentation acceptance path.",
+          "freshness": "Browser and source links verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Canonical ship manual",
+              "path": "docs/system/ship-manual.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Interactive human manual",
+              "path": "docs/viewers/ship-manual.html",
+              "kind": "viewer"
+            }
+          ]
+        },
+        {
+          "id": "building-page",
+          "capability": "Human Building page",
+          "owner": "Documentation / frontend",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "verified",
+          "summary": "This generated page reports the full build without pretending it is live Ship Computer telemetry or assigning a fake overall percentage.",
+          "dependencies": ["human-ship-manual"],
+          "blockers": ["It remains a static snapshot until native Computer readiness projections exist."],
+          "next_gate": "Regenerate on accepted build changes; later consume authenticated Computer readiness projections.",
+          "freshness": "Generated 2026-07-11",
+          "evidence": [
+            {
+              "label": "Canonical build register",
+              "path": "docs/system/ship-build-register.json",
+              "kind": "machine-readable register"
+            },
+            {
+              "label": "Building page renderer",
+              "path": "scripts/render-ship-building.mjs",
+              "kind": "generator"
+            }
+          ]
+        },
+        {
+          "id": "captain-shipbook",
+          "capability": "Captain's Shipbook",
+          "owner": "Captain / Captain PA",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "verified",
+          "summary": "The generated Captain volume embeds the canonical whole-ship manual, shared officer operating standard, and all ten department books byte-for-byte. The Captain harness exposes its verified index and enum-bounded whole sections through read-only ship.knowledge without raw path access.",
+          "dependencies": ["human-ship-manual"],
+          "blockers": ["The generated volume must be rerun whenever an embedded source changes."],
+          "next_gate": "Run the deterministic shipbook freshness check in every manual-affecting acceptance path.",
+          "freshness": "Generated and checked 2026-07-11",
+          "evidence": [
+            {
+              "label": "Captain Shipbook",
+              "path": "docs/shipbook/shipbook-captain.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Captain harness manual",
+              "path": "docs/system/captain-harness-manual.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Bounded Shipbook knowledge implementation",
+              "path": "ship/captain-harness/src/knowledge.mjs",
+              "kind": "code"
+            }
+          ]
+        },
+        {
+          "id": "officer-common-manual",
+          "capability": "Common officer manual",
+          "owner": "Captain / documentation",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "verified",
+          "summary": "The shared officer operating standard teaches rank, authority, routing, personal Thinking/Operations/Engineering cells, boards, evidence duties, failure procedure, and the distinction between documented routes and runtime enforcement.",
+          "dependencies": ["captain-shipbook"],
+          "blockers": ["Most officer endpoints and routes remain target or configured rather than runtime-enforced."],
+          "next_gate": "Update the operating standard alongside each ratified runtime route or authority change.",
+          "freshness": "Generated source verified 2026-07-11",
+          "evidence": [
+            {
+              "label": "Shared officer operating standard",
+              "path": "docs/shipbook/shared/officer-operating-standard.md",
+              "kind": "manual"
+            },
+            {
+              "label": "Officer contact route registry",
+              "path": "config/ship-officer-routes.json",
+              "kind": "machine-readable design registry"
+            }
+          ]
+        },
+        {
+          "id": "department-manuals",
+          "capability": "Department manuals",
+          "owner": "Each department officer",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "verified",
+          "summary": "Ten atomic department books cover mission, seats, command boundaries, exact officer contacts, personal cells, tools, boards, costs, provenance, failure doctrine, and current-versus-target state.",
+          "dependencies": ["officer-common-manual"],
+          "blockers": ["Most departments are not yet manned or fully implemented; the books describe those gaps explicitly."],
+          "next_gate": "Require each department build slice to update its source book and pass deterministic Captain-volume assembly.",
+          "freshness": "Ten books generated and checked 2026-07-11",
+          "evidence": [
+            {
+              "label": "Department manual index",
+              "path": "docs/shipbook/README.md",
+              "kind": "charter"
+            },
+            {
+              "label": "Shipbook renderer and validator",
+              "path": "scripts/render-shipbooks.mjs",
+              "kind": "generator"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bridge",
+      "name": "Bridge and future command surfaces",
+      "summary": "The Manual owns the commissioned Falcon imagery. The operational Bridge starts again from real data and a real API.",
+      "claims": [
+        {
+          "id": "manual-visual-system",
+          "capability": "Falcon Manual visual system",
+          "owner": "Codex Frontend Manager / documentation",
+          "artifact_state": "built",
+          "operational_state": "not-applicable",
+          "evidence_state": "recorded",
+          "summary": "The cinematic Falcon guardian and guardian command-deck direction are assigned to the Shipwright Manual and its editorial/building surfaces, not the operational Bridge.",
+          "dependencies": ["human-ship-manual"],
+          "blockers": [],
+          "next_gate": "Keep manual and operational Bridge identities distinct as both evolve.",
+          "freshness": "Direction corrected 2026-07-11",
+          "evidence": [
+            {
+              "label": "Shipwright Manual viewer",
+              "path": "docs/viewers/ship-manual.html",
+              "kind": "viewer"
+            },
+            {
+              "label": "Existing guardian asset",
+              "path": "docs/viewers/assets/ship-manual-falcon-guardian.webp",
+              "kind": "visual asset"
+            }
+          ]
+        },
+        {
+          "id": "future-shipwright-bridge",
+          "capability": "Future Shipwright Bridge",
+          "owner": "Codex Frontend Manager / Chief Engineer",
+          "artifact_state": "absent",
+          "operational_state": "unmanned",
+          "evidence_state": "verified",
+          "summary": "The operational Bridge requires a complete from-scratch product and visual design. It will not reuse the Manual page as its shell or treat fixture data as live.",
+          "dependencies": ["phase-1", "bridge-contracts", "bridge-voyage", "bridge-api", "bridge-recovery", "bridge-fixture"],
+          "blockers": ["Minimum Bridge readiness gate is entirely unmet.", "No real Computer-backed voyage fixture."],
+          "next_gate": "After the minimum gate passes, design desktop and mobile operational flows against the real API and evidence semantics.",
+          "freshness": "Direction corrected 2026-07-11",
+          "evidence": [
+            {
+              "label": "Bridge frontend requirements",
+              "path": "docs/design/ship-computer-bridge-frontend-plan.md",
+              "kind": "requirements requiring re-grounded visual direction"
+            },
+            {
+              "label": "Ship Computer architecture",
+              "path": "docs/design/ship-computer-design.md",
+              "kind": "design"
+            }
+          ]
+        },
+        {
+          "id": "falcon-command-hq",
+          "capability": "Future Falcon Command headquarters",
+          "owner": "Commodore",
+          "artifact_state": "design",
+          "operational_state": "unmanned",
+          "evidence_state": "configured",
+          "summary": "Falcon Command is reserved for a later fleet-level headquarters with a Command Computer, every ship Bridge, cross-ship visibility, and ship communications. It is not the Shipwright Bridge.",
+          "dependencies": ["future-shipwright-bridge"],
+          "blockers": ["No fleet-level product or Command Computer design is commissioned in this build."],
+          "next_gate": "Preserve the name and boundary; design only after at least one Ship Computer-backed Bridge is operational.",
+          "freshness": "Future note recorded 2026-07-10",
+          "evidence": [
+            {
+              "label": "Fleet command design",
+              "path": "docs/design/fleet-command.md",
+              "kind": "related future design"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "known_register_issues": [
+    {
+      "severity": "high",
+      "title": "Ship Computer board epic absent",
+      "detail": "The design index names a `ship-computer` epic, but no such board item exists. Implementation must not begin as untracked work."
+    },
+    {
+      "severity": "high",
+      "title": "Bridge naming conflict on the board",
+      "detail": "The `bridge-buildout` epic still assigns cross-ship fleet visibility to Shipwright's Bridge. The newer boundary reserves that product for future Falcon Command. Supersede or amend the board record before using it."
+    },
+    {
+      "severity": "medium",
+      "title": "Broken board evidence paths",
+      "detail": "`bridge-buildout` and `activity-feed-board-source` point to missing active design documents; `ship-org-sgov` points to its old path instead of `docs/design/implemented/ship-org-sgov.md`."
+    },
+    {
+      "severity": "medium",
+      "title": "Historical build-state copy drifts",
+      "detail": "The older build-state page reports 31 Captain tests and historical RUNNING seats. Fresh verification is 37 tests, and runtime state must come from fresh evidence rather than static labels."
+    },
+    {
+      "severity": "high",
+      "title": "Queued work has no correlated return",
+      "detail": "The precursor snapshot found 35 queued staff orders and zero correlated reports. Do not interpret order volume as execution capacity."
+    },
+    {
+      "severity": "high",
+      "title": "Observability remains bounded by mutable sources",
+      "detail": "Current repository collectors are useful migration evidence, but there is no authenticated producer identity, immutable accepted sequence, complete coverage registry, or external checkpoint custody."
+    }
+  ],
+  "source_priority": [
+    "Accepted Ship Computer records and receipts, once the Computer exists",
+    "Named acceptance tests, sealed artifacts, and independently checkable receipts",
+    "Durable source-boundary records with explicit truth class",
+    "Advisory board and current-state records",
+    "Configuration and design targets",
+    "Unverified prose or recollection"
+  ]
+}

@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Building Shipwright</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --black: #03060b;
+      --ink: #070d16;
+      --panel: #0a121d;
+      --panel-2: #0d1724;
+      --line: #1a2a3d;
+      --line-strong: #2e4a68;
+      --text: #edf5ff;
+      --muted: #9aabc0;
+      --faint: #60738b;
+      --blue: #5d91ff;
+      --blue-2: #2f6fff;
+      --cyan: #5ce8f2;
+      --green: #57d998;
+      --amber: #f1c65b;
+      --red: #ff777d;
+      --violet: #b58cff;
+      --white: #ffffff;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --shell: 1420px;
+      --header: 54px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--black); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(rgba(29, 60, 94, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 60, 94, .07) 1px, transparent 1px),
+        var(--black);
+      background-size: 64px 64px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+    button, input, select { font: inherit; }
+    button { letter-spacing: 0; }
+    :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: var(--header);
+      border-bottom: 1px solid rgba(91, 145, 205, .25);
+      background: rgba(3, 7, 13, .94);
+      backdrop-filter: blur(18px);
+    }
+    .topbar-inner {
+      width: min(var(--shell), calc(100% - 36px));
+      height: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(92, 232, 242, .55);
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-weight: 800;
+      box-shadow: inset 0 0 18px rgba(47, 111, 255, .16), 0 0 20px rgba(47, 111, 255, .12);
+    }
+    .brand b { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+    .brand small { display: block; color: var(--faint); font: 9px/1.4 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .top-links { display: flex; align-items: center; gap: 18px; }
+    .top-links a { color: var(--muted); font-size: 12px; text-decoration: none; }
+    .top-links a:hover { color: var(--cyan); }
+    .connection {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--amber);
+      font: 10px var(--mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .connection i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 12px rgba(241, 198, 91, .8);
+    }
+
+    .masthead {
+      position: relative;
+      min-height: 360px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line-strong);
+      isolation: isolate;
+      background: #040914;
+    }
+    .masthead::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        linear-gradient(90deg, rgba(3, 6, 11, .99) 0%, rgba(3, 7, 13, .93) 42%, rgba(3, 7, 13, .38) 68%, rgba(3, 7, 13, .2) 100%),
+        linear-gradient(0deg, rgba(3, 6, 11, .9) 0%, transparent 45%),
+        url("assets/ship-manual-falcon-guardian.webp");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center 21%;
+      filter: saturate(1.18) contrast(1.05);
+    }
+    .masthead::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .28;
+      background:
+        linear-gradient(90deg, transparent 0 51%, rgba(85, 144, 255, .16) 51.1%, transparent 51.3%),
+        linear-gradient(0deg, transparent 0 58%, rgba(92, 232, 242, .12) 58.1%, transparent 58.3%);
+      pointer-events: none;
+    }
+    .masthead-inner {
+      width: min(var(--shell), calc(100% - 36px));
+      margin: 0 auto;
+      padding: 64px 0 54px;
+      display: grid;
+      grid-template-columns: minmax(0, 720px) minmax(260px, 1fr);
+      gap: 52px;
+      align-items: end;
+    }
+    .eyebrow, .section-kicker {
+      color: var(--cyan);
+      font: 700 11px var(--mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin: 14px 0 16px; font-size: 62px; line-height: 1.02; letter-spacing: 0; max-width: 700px; }
+    h1 span { color: var(--blue); }
+    .hero-copy { max-width: 650px; color: #b9c8da; font-size: 16px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 25px; }
+    .hero-chip {
+      padding: 7px 10px;
+      border: 1px solid var(--line-strong);
+      background: rgba(4, 10, 18, .72);
+      color: var(--muted);
+      font: 10px var(--mono);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .hero-chip.alert { color: var(--amber); border-color: rgba(241, 198, 91, .48); }
+    .hero-side {
+      justify-self: end;
+      width: min(100%, 330px);
+      padding: 15px 0 0 18px;
+      border-left: 1px solid rgba(92, 232, 242, .36);
+      color: var(--muted);
+    }
+    .hero-side b { color: var(--text); font-size: 18px; }
+    .hero-side p { margin: 6px 0 0; font-size: 12px; }
+    .hero-side code { color: var(--cyan); font: 10px var(--mono); }
+
+    .control-deck {
+      position: sticky;
+      top: var(--header);
+      z-index: 35;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 10, 17, .97);
+      backdrop-filter: blur(14px);
+    }
+    .control-inner {
+      width: min(var(--shell), calc(100% - 36px));
+      margin: 0 auto;
+      padding: 10px 0;
+      display: grid;
+      grid-template-columns: minmax(220px, 1.1fr) auto minmax(170px, .45fr);
+      gap: 12px;
+      align-items: center;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap::before { content: "⌕"; position: absolute; left: 12px; top: 7px; color: var(--faint); font-size: 18px; }
+    .search-wrap input, .group-select {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 4px;
+      background: #070d15;
+      color: var(--text);
+    }
+    .search-wrap input { padding: 8px 12px 8px 38px; }
+    .group-select { padding: 8px 30px 8px 10px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .filter-button {
+      min-height: 34px;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      font: 10px var(--mono);
+      text-transform: uppercase;
+    }
+    .filter-button:hover { color: var(--text); border-color: var(--line-strong); }
+    .filter-button.active { color: var(--white); border-color: var(--blue); background: rgba(47, 111, 255, .18); }
+
+    .section-nav {
+      border-bottom: 1px solid var(--line);
+      background: #060b12;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .section-nav-inner {
+      width: min(var(--shell), calc(100% - 36px));
+      min-width: max-content;
+      margin: 0 auto;
+      display: flex;
+      gap: 24px;
+    }
+    .section-nav a {
+      padding: 11px 0 10px;
+      color: var(--faint);
+      border-bottom: 1px solid transparent;
+      font: 10px var(--mono);
+      letter-spacing: .05em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .section-nav a:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    main { display: block; }
+    .band { border-bottom: 1px solid var(--line); background: rgba(7, 13, 22, .92); }
+    .band:nth-child(even) { background: rgba(5, 10, 17, .94); }
+    .band-inner { width: min(var(--shell), calc(100% - 36px)); margin: 0 auto; padding: 46px 0 50px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 24px; }
+    .section-head h2 { margin: 5px 0 0; font-size: 29px; line-height: 1.16; letter-spacing: 0; }
+    .section-head p { max-width: 650px; margin: 0; color: var(--muted); text-align: right; }
+
+    .truth-banner {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 0;
+      border: 1px solid var(--line-strong);
+      background: rgba(4, 10, 18, .8);
+    }
+    .truth-banner > div { padding: 20px; }
+    .truth-banner > div + div { border-left: 1px solid var(--line); }
+    .truth-banner strong { display: block; margin-bottom: 6px; font-size: 16px; }
+    .truth-banner p { margin: 0; color: var(--muted); }
+    .status-callout { color: var(--amber); font: 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin-top: 20px;
+      border: 1px solid var(--line);
+    }
+    .metric { min-width: 0; padding: 17px 15px; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric b { display: block; color: var(--text); font: 700 23px var(--mono); overflow-wrap: anywhere; }
+    .metric span { display: block; margin-top: 4px; color: var(--cyan); font: 9px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .metric p { margin: 7px 0 0; color: var(--faint); font-size: 11px; }
+
+    .axes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .axis { border-top: 2px solid var(--blue); background: rgba(11, 19, 30, .72); padding: 16px; }
+    .axis:nth-child(2) { border-color: var(--cyan); }
+    .axis:nth-child(3) { border-color: var(--amber); }
+    .axis h3 { margin-bottom: 10px; font-size: 14px; }
+    .axis dl { margin: 0; }
+    .axis dt { float: left; clear: left; margin-right: 7px; color: var(--text); font: 9px var(--mono); text-transform: uppercase; }
+    .axis dd { margin: 0 0 7px; color: var(--faint); font-size: 11px; }
+
+    .lineage {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      border: 1px solid var(--line-strong);
+      background: #060d17;
+    }
+    .lineage-step { position: relative; min-height: 92px; padding: 15px 24px 15px 14px; }
+    .lineage-step + .lineage-step { border-left: 1px solid var(--line); }
+    .lineage-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 41px;
+      z-index: 2;
+      width: 8px;
+      height: 8px;
+      border-top: 1px solid var(--blue);
+      border-right: 1px solid var(--blue);
+      transform: rotate(45deg);
+      background: #060d17;
+    }
+    .lineage-step span { color: var(--blue); font: 9px var(--mono); }
+    .lineage-step b { display: block; margin-top: 8px; font-size: 12px; line-height: 1.35; }
+    .lineage-note { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
+
+    .phases { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--line-strong); }
+    .phase { position: relative; min-height: 238px; padding: 17px 15px; background: rgba(6, 13, 23, .84); }
+    .phase + .phase { border-left: 1px solid var(--line); }
+    .phase .phase-num { color: var(--cyan); font: 10px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+    .phase h3 { min-height: 46px; margin: 8px 0 12px; font-size: 14px; }
+    .phase p { color: var(--muted); font-size: 11px; }
+    .phase .next { margin: 13px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--faint); }
+    .phase .next b { color: var(--text); font: 9px var(--mono); text-transform: uppercase; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 5px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 22px;
+      padding: 3px 7px;
+      border: 1px solid var(--line-strong);
+      border-radius: 3px;
+      color: var(--muted);
+      background: rgba(4, 10, 18, .72);
+      font: 9px var(--mono);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .badge[data-value="accepted"], .badge[data-value="verified"], .badge[data-value="live"] { border-color: rgba(87, 217, 152, .5); color: var(--green); }
+    .badge[data-value="built"], .badge[data-value="recorded"], .badge[data-value="receipt"] { border-color: rgba(93, 145, 255, .55); color: var(--blue); }
+    .badge[data-value="queue-only"], .badge[data-value="degraded"], .badge[data-value="reported"] { border-color: rgba(241, 198, 91, .52); color: var(--amber); }
+    .badge[data-value="absent"], .badge[data-value="unmanned"], .badge[data-value="unknown"] { border-color: rgba(255, 119, 125, .5); color: var(--red); }
+    .badge[data-value="design"], .badge[data-value="configured"] { border-color: rgba(181, 140, 255, .42); color: var(--violet); }
+
+    .route-table, .api-table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); }
+    .route-table th, .route-table td, .api-table th, .api-table td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .route-table th, .api-table th { color: var(--faint); background: #070e18; font: 9px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .route-table td, .api-table td { color: var(--muted); font-size: 12px; }
+    .route-table td:first-child, .api-table td:first-child { color: var(--text); font-weight: 700; }
+    .route-table code { color: var(--cyan); font: 10px var(--mono); }
+
+    .register-summary { display: flex; align-items: center; gap: 14px; color: var(--faint); font: 10px var(--mono); text-transform: uppercase; }
+    .register-summary b { color: var(--cyan); font-size: 15px; }
+    .claim-group { padding: 30px 0 8px; }
+    .claim-group + .claim-group { border-top: 1px solid var(--line); }
+    .claim-group-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 13px; }
+    .claim-group-head h3 { margin: 0; font-size: 19px; }
+    .claim-group-head p { max-width: 700px; margin: 0; color: var(--faint); text-align: right; font-size: 12px; }
+    .claim-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .claim {
+      position: relative;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: rgba(9, 17, 27, .82);
+      padding: 16px;
+      transition: border-color .16s ease, background .16s ease;
+    }
+    .claim:hover { border-color: var(--line-strong); background: rgba(11, 21, 34, .92); }
+    .claim-top { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+    .claim h4 { margin: 0; font-size: 15px; line-height: 1.35; }
+    .claim-owner { margin-top: 3px; color: var(--cyan); font: 9px var(--mono); text-transform: uppercase; }
+    .claim-summary { margin: 11px 0; color: var(--muted); font-size: 12px; }
+    .claim-meta {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+    }
+    .claim-fresh { color: var(--faint); font: 9px var(--mono); }
+    .claim-open {
+      min-height: 30px;
+      padding: 5px 9px;
+      border: 1px solid var(--line-strong);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--blue);
+      cursor: pointer;
+      font: 9px var(--mono);
+      text-transform: uppercase;
+    }
+    .claim-open:hover { color: var(--white); border-color: var(--blue); background: rgba(47, 111, 255, .13); }
+    .claim-alert { margin-top: 9px; color: var(--amber); font: 9px var(--mono); }
+    .claim[hidden], .claim-group[hidden] { display: none; }
+
+    .factory-line {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      align-items: stretch;
+      border: 1px solid var(--line-strong);
+      background: #060d16;
+    }
+    .factory-node { position: relative; min-height: 105px; padding: 15px 13px; }
+    .factory-node + .factory-node { border-left: 1px solid var(--line); }
+    .factory-node:not(:last-child)::after { content: ">"; position: absolute; right: -6px; top: 39px; z-index: 2; color: var(--cyan); background: #060d16; font: 12px var(--mono); }
+    .factory-node b { display: block; font-size: 12px; }
+    .factory-node span { display: block; margin-top: 7px; color: var(--faint); font: 9px var(--mono); text-transform: uppercase; }
+    .factory-node.blocked span { color: var(--red); }
+    .factory-boundary { margin-top: 12px; padding: 12px 14px; border-left: 2px solid var(--amber); background: rgba(241, 198, 91, .06); color: var(--muted); font-size: 12px; }
+
+    .gate-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); border: 1px solid var(--line-strong); }
+    .gate-main, .gate-side { padding: 20px; }
+    .gate-side { border-left: 1px solid var(--line); background: rgba(4, 10, 18, .72); }
+    .gate-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .gate-title h3 { margin: 0; font-size: 19px; }
+    .gate-list { list-style: none; margin: 18px 0 0; padding: 0; }
+    .gate-list li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .gate-box { width: 17px; height: 17px; border: 1px solid var(--red); color: var(--red); display: grid; place-items: center; font: 9px var(--mono); }
+    .gate-side strong { color: var(--amber); }
+    .gate-side p { color: var(--muted); font-size: 12px; }
+
+    .issue-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
+    .issue { padding: 17px; min-height: 145px; }
+    .issue + .issue { border-left: 1px solid var(--line); }
+    .issue:nth-child(n+4) { border-top: 1px solid var(--line); }
+    .issue:nth-child(3n+1) { border-left: 0; }
+    .issue span { color: var(--red); font: 9px var(--mono); text-transform: uppercase; }
+    .issue.medium span { color: var(--amber); }
+    .issue h3 { margin: 8px 0; font-size: 14px; }
+    .issue p { margin: 0; color: var(--muted); font-size: 11px; }
+
+    .source-priority { margin: 0; padding: 0; list-style: none; counter-reset: source; border: 1px solid var(--line); }
+    .source-priority li { counter-increment: source; display: grid; grid-template-columns: 48px 1fr; min-height: 48px; align-items: center; border-bottom: 1px solid var(--line); color: var(--muted); }
+    .source-priority li:last-child { border-bottom: 0; }
+    .source-priority li::before { content: counter(source, decimal-leading-zero); height: 100%; display: grid; place-items: center; border-right: 1px solid var(--line); color: var(--blue); font: 10px var(--mono); }
+    .source-priority span { padding: 10px 14px; }
+
+    .empty-state { display: none; padding: 30px; border: 1px solid var(--line); color: var(--muted); text-align: center; }
+    .empty-state.visible { display: block; }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      background: rgba(0, 3, 8, .72);
+      backdrop-filter: blur(4px);
+    }
+    .drawer-backdrop.open { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 90;
+      width: min(620px, 100%);
+      height: 100vh;
+      overflow-y: auto;
+      transform: translateX(102%);
+      border-left: 1px solid var(--line-strong);
+      background: #07101a;
+      box-shadow: -30px 0 70px rgba(0, 0, 0, .46);
+      transition: transform .2s ease;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 20px; border-bottom: 1px solid var(--line); background: rgba(7, 16, 26, .96); }
+    .drawer-head span { color: var(--cyan); font: 10px var(--mono); text-transform: uppercase; }
+    .drawer-close { width: 34px; height: 34px; border: 1px solid var(--line-strong); border-radius: 3px; background: transparent; color: var(--text); cursor: pointer; font-size: 20px; }
+    .drawer-body { padding: 26px 20px 48px; }
+    .drawer-body h2 { margin-bottom: 7px; font-size: 28px; }
+    .drawer-owner { color: var(--cyan); font: 10px var(--mono); text-transform: uppercase; }
+    .drawer-body > p { color: var(--muted); }
+    .drawer-block { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .drawer-block h3 { margin-bottom: 10px; color: var(--faint); font: 10px var(--mono); text-transform: uppercase; }
+    .drawer-list { margin: 0; padding-left: 18px; color: var(--muted); }
+    .drawer-list li { margin: 6px 0; }
+    .evidence-list { display: grid; gap: 7px; }
+    .evidence-link { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 10px 11px; border: 1px solid var(--line); border-radius: 3px; color: var(--text); text-decoration: none; }
+    .evidence-link:hover { border-color: var(--blue); background: rgba(47, 111, 255, .08); }
+    .evidence-link span:last-child { color: var(--faint); font: 9px var(--mono); text-transform: uppercase; }
+    .dependency-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .dependency-list span { padding: 4px 6px; border: 1px solid var(--line); color: var(--muted); font: 9px var(--mono); }
+
+    footer { border-top: 1px solid var(--line-strong); background: #03070d; }
+    .footer-inner { width: min(var(--shell), calc(100% - 36px)); margin: 0 auto; padding: 22px 0 30px; display: flex; justify-content: space-between; gap: 30px; color: var(--faint); font: 9px var(--mono); }
+
+    @media (max-width: 1180px) {
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+      .metric:nth-child(4) { border-left: 0; border-top: 1px solid var(--line); }
+      .metric:nth-child(n+5) { border-top: 1px solid var(--line); }
+      .phases { grid-template-columns: repeat(3, 1fr); }
+      .phase:nth-child(4) { border-left: 0; }
+      .phase:nth-child(n+4) { border-top: 1px solid var(--line); }
+      .lineage { grid-template-columns: repeat(4, 1fr); }
+      .lineage-step:nth-child(5) { border-left: 0; }
+      .lineage-step:nth-child(n+5) { border-top: 1px solid var(--line); }
+      .lineage-step:nth-child(4)::after { display: none; }
+      .factory-line { grid-template-columns: repeat(4, 1fr); }
+      .factory-node:nth-child(5) { border-left: 0; }
+      .factory-node:nth-child(n+5) { border-top: 1px solid var(--line); }
+      .factory-node:nth-child(4)::after { display: none; }
+    }
+
+    @media (max-width: 900px) {
+      h1 { font-size: 48px; }
+      .masthead-inner { grid-template-columns: 1fr; gap: 28px; }
+      .hero-side { justify-self: start; }
+      .control-inner { grid-template-columns: 1fr; }
+      .filters { justify-content: flex-start; }
+      .axes, .claim-grid { grid-template-columns: 1fr; }
+      .truth-banner, .gate-layout { grid-template-columns: 1fr; }
+      .truth-banner > div + div, .gate-side { border-left: 0; border-top: 1px solid var(--line); }
+      .section-head, .claim-group-head { align-items: start; flex-direction: column; }
+      .section-head p, .claim-group-head p { text-align: left; }
+      .issue-grid { grid-template-columns: 1fr; }
+      .issue + .issue, .issue:nth-child(3n+1) { border-left: 0; border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 660px) {
+      :root { --header: 48px; }
+      .topbar-inner, .masthead-inner, .control-inner, .section-nav-inner, .band-inner, .footer-inner { width: min(100% - 22px, var(--shell)); }
+      .brand small, .top-links a { display: none; }
+      .connection { font-size: 8px; }
+      .masthead { min-height: 400px; }
+      .masthead::before { background-position: 61% center; }
+      .masthead-inner { padding: 52px 0 38px; }
+      h1 { font-size: 40px; }
+      .hero-copy { font-size: 14px; }
+      .band-inner { padding: 34px 0 38px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(3), .metric:nth-child(5) { border-left: 0; }
+      .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+      .lineage, .phases, .factory-line { grid-template-columns: 1fr; }
+      .lineage-step + .lineage-step, .phase + .phase, .factory-node + .factory-node { border-left: 0; border-top: 1px solid var(--line); }
+      .lineage-step::after, .factory-node::after { display: none; }
+      .phase { min-height: 0; }
+      .phase h3 { min-height: 0; }
+      .route-table, .api-table { display: block; overflow-x: auto; white-space: normal; }
+      .footer-inner { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">F</div>
+        <div><b>Falcon Enterprises</b><small>Shipwright / build register</small></div>
+      </div>
+      <div class="top-links">
+        <a href="ship-manual.html">Ship Manual</a>
+        <a href="../system/ship-build-register.json">Raw register</a>
+        <span class="connection"><i aria-hidden="true"></i>Ship Computer not connected</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="masthead" aria-labelledby="page-title">
+    <div class="masthead-inner">
+      <div>
+        <div class="eyebrow">Shipwright / construction record / evidence first</div>
+        <h1 id="page-title">Building <span>Shipwright.</span></h1>
+        <p class="hero-copy">Every hull section, command seat, personal cell, factory route, data boundary, and readiness gate in one inspectable build record. Status attaches to exact claims, never to people in the abstract.</p>
+        <div class="hero-meta">
+          <span class="hero-chip alert">Static verified snapshot</span>
+          <span class="hero-chip">No overall percentage</span>
+          <span class="hero-chip">Generated 2026-07-11T00:37:09Z</span>
+        </div>
+      </div>
+      <aside class="hero-side" aria-label="Current build posture">
+        <div class="section-kicker">Current posture</div>
+        <b>Build the instruments before the Bridge.</b>
+        <p>The future operational Bridge begins after a canonical Computer, authenticated API, and one real no-loss voyage exist. Until then, this page names the gap.</p>
+        <p><code>MANUAL ≠ BRIDGE ≠ FALCON COMMAND</code></p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="control-deck" aria-label="Build register filters">
+    <div class="control-inner">
+      <label class="search-wrap"><span class="sr-only">Search build claims</span><input id="claim-search" type="search" placeholder="Search capability, owner, blocker, evidence..." autocomplete="off"></label>
+      <div class="filters" role="group" aria-label="Filter by state">
+        <button class="filter-button active" type="button" data-filter="all">All</button>
+        <button class="filter-button" type="button" data-filter="built">Built</button>
+        <button class="filter-button" type="button" data-filter="live">Live</button>
+        <button class="filter-button" type="button" data-filter="queue-only">Queue-only</button>
+        <button class="filter-button" type="button" data-filter="target">Target</button>
+        <button class="filter-button" type="button" data-filter="blocked">Blocked</button>
+        <button class="filter-button" type="button" data-filter="unverified">Unverified</button>
+      </div>
+      <label><span class="sr-only">Filter by build group</span><select id="group-select" class="group-select"><option value="all">All build groups</option></select></label>
+    </div>
+  </section>
+
+  <nav class="section-nav" aria-label="Page sections">
+    <div class="section-nav-inner">
+      <a href="#truth">Truth</a>
+      <a href="#command-lineage">Command lineage</a>
+      <a href="#critical-path">Critical path</a>
+      <a href="#routes">Routes</a>
+      <a href="#register">Full register</a>
+      <a href="#factory-route">Factory</a>
+      <a href="#api">Computer / API</a>
+      <a href="#bridge-gate">Bridge gate</a>
+      <a href="#hull-stress">Hull stress</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="band" id="truth">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">00 / Read this first</div><h2>Claims carry status. People do not.</h2></div>
+          <p>A seat can have built code, an unmanned runtime, and configured evidence at the same time. The three axes stay separate so configuration never lights a capability as live.</p>
+        </div>
+        <div class="truth-banner">
+          <div><strong id="status-note-title">Ship Computer not connected</strong><p id="status-note"></p></div>
+          <div><div class="status-callout">Operational rule</div><p>Queued does not mean delivered. Delivered does not mean executing. A done claim does not close a mission. Only the named return and acceptance path closes work.</p></div>
+        </div>
+        <div class="metrics" id="metrics"></div>
+        <div class="axes" id="axes"></div>
+      </div>
+    </section>
+
+    <section class="band" id="command-lineage">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">01 / No-loss command</div><h2>Every order must return to command.</h2></div>
+          <p>This is the target canonical lineage. Current staff JSONL queues preserve bounded envelopes, but they do not enforce this graph end to end.</p>
+        </div>
+        <div class="lineage" id="lineage"></div>
+        <p class="lineage-note">Authority, execution, and return are separate planes. Every executable node gets one primary parent and one Captain-owned root mission.</p>
+      </div>
+    </section>
+
+    <section class="band" id="critical-path">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">02 / Computer first</div><h2>Critical path to an operational Bridge.</h2></div>
+          <p>No fake completion percentage: each phase advances only through its own observable gate.</p>
+        </div>
+        <div class="phases" id="phases"></div>
+      </div>
+    </section>
+
+    <section class="band" id="routes">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">03 / Typed destinations</div><h2>Different work goes to different hands.</h2></div>
+          <p>The Advisor is direct personal thought. Science is a broad asynchronous commission. Personal Engineering is not ship engineering, and the Chief Engineer is not the Incubator PM.</p>
+        </div>
+        <table class="route-table">
+          <thead><tr><th>Destination</th><th>Typed route</th><th>Expected cadence</th><th>Current truth</th></tr></thead>
+          <tbody id="route-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="band" id="register">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">04 / Full ship register</div><h2>Every build claim, proof, dependency, and blocker.</h2></div>
+          <div class="register-summary"><b id="visible-count">0</b><span>claims visible</span></div>
+        </div>
+        <div id="claim-groups"></div>
+        <div id="empty-state" class="empty-state">No build claims match the current filters.</div>
+      </div>
+    </section>
+
+    <section class="band" id="factory-route">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">05 / Engineering boundary</div><h2>The factory route is explicit.</h2></div>
+          <p>Broad ship work does not jump from Captain to anonymous worker. The Chief Engineer owns the relationship; the distinct Incubator PM owns factory decomposition.</p>
+        </div>
+        <div class="factory-line" aria-label="Target factory route">
+          <div class="factory-node"><b>Captain</b><span>Commission</span></div>
+          <div class="factory-node blocked"><b>Chief Engineer</b><span>Unmanned</span></div>
+          <div class="factory-node blocked"><b>Typed handoff</b><span>Not built</span></div>
+          <div class="factory-node"><b>Incubator PM</b><span>Exists / human-loadable</span></div>
+          <div class="factory-node"><b>Isolated factory</b><span>PM-controlled workers</span></div>
+          <div class="factory-node blocked"><b>Trusted landing</b><span>Broker not built</span></div>
+          <div class="factory-node blocked"><b>Captain return</b><span>No correlated path</span></div>
+        </div>
+        <div class="factory-boundary">No AI writer gets the main working copy in the target architecture. That rule is configured, not yet enforced end to end; shared-copy and PA-sealing migration debt remains visible.</div>
+      </div>
+    </section>
+
+    <section class="band" id="api">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">06 / Ship Computer</div><h2>Precursors are not the API.</h2></div>
+          <p>The table is generated from the same claims as the full register. Existing local endpoints remain migration aids until authenticated canonical services pass their gates.</p>
+        </div>
+        <table class="api-table">
+          <thead><tr><th>Capability</th><th>Artifact</th><th>Runtime</th><th>Evidence</th><th>Next gate</th></tr></thead>
+          <tbody id="api-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="band" id="bridge-gate">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">07 / Product gate</div><h2>The new Bridge starts from real evidence.</h2></div>
+          <p>The Falcon imagery and current cinematic layout belong to the Manual. The operational Bridge gets a separate, from-scratch product and visual design.</p>
+        </div>
+        <div class="gate-layout">
+          <div class="gate-main">
+            <div class="gate-title"><h3 id="bridge-gate-name"></h3><span class="badge" data-value="absent">Not ready</span></div>
+            <ul class="gate-list" id="bridge-requirements"></ul>
+          </div>
+          <aside class="gate-side"><strong>Why the hold exists</strong><p id="bridge-gate-note"></p><p>The first real voyage becomes the frontend fixture. That keeps the future Bridge honest about delivery, liveness, costs, blind spots, and acceptance.</p></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="hull-stress">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">08 / Hull stress</div><h2>Contradictions and missing proof stay visible.</h2></div>
+          <p>These are register integrity problems, not cosmetic notes. Each one can otherwise create false confidence in the build.</p>
+        </div>
+        <div class="issue-grid" id="issues"></div>
+      </div>
+    </section>
+
+    <section class="band" id="source-order">
+      <div class="band-inner">
+        <div class="section-head">
+          <div><div class="section-kicker">09 / Record precedence</div><h2>Which source wins.</h2></div>
+          <p>Record supremacy is not record worship. A record proves what its boundary observed, not every fact asserted inside it.</p>
+        </div>
+        <ol class="source-priority" id="source-priority"></ol>
+      </div>
+    </section>
+  </main>
+
+  <div id="drawer-backdrop" class="drawer-backdrop" aria-hidden="true"></div>
+  <aside id="claim-drawer" class="drawer" aria-hidden="true" aria-labelledby="drawer-title">
+    <div class="drawer-head"><span>Build claim inspection</span><button id="drawer-close" class="drawer-close" type="button" aria-label="Close details">×</button></div>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+
+  <footer>
+    <div class="footer-inner"><span>Falcon Enterprises / Shipwright construction record</span><span>Generated from docs/system/ship-build-register.json · 2026-07-11T00:37:09Z</span></div>
+  </footer>
+
+  <script id="build-register" type="application/json">{"schema":"falcon.ship-build-register","schema_version":1,"ship_id":"shipwright","title":"Building Shipwright","subtitle":"The evidence-backed build register for the ship, its Computer, and the future Bridge.","as_of":"2026-07-11T00:37:09Z","ship_computer_connected":false,"overall_percentage":null,"status_note":"Static verified snapshot. The Ship Computer is not built or connected; repository evidence and precursor collectors are named explicitly.","status_axes":{"artifact":{"absent":"No implementation artifact exists.","design":"An implementation design exists; this is not runtime capability.","configured":"A role, route, or slot is declared; execution is not proven.","built":"Concrete code or a durable artifact exists.","accepted":"The built artifact passed its named acceptance gate."},"operational":{"not-applicable":"This claim is documentary or structural rather than a running service.","unmanned":"A destination may exist, but no current occupant is expected to execute it.","queue-only":"A durable queue accepts work; wake, execution, and return are not automatic.","standby":"A runnable component exists but no fresh execution is currently established.","live":"Fresh, bounded execution evidence exists for the exact capability claimed.","degraded":"The capability operates with a named loss of coverage or assurance.","unknown":"Evidence is insufficient to establish current operating state."},"evidence":{"configured":"The claim comes from declared configuration only.","reported":"An actor or document asserts the claim without independent confirmation.","recorded":"A durable boundary record exists.","receipt":"A named system returned a checkable result.","verified":"The claim passed the named tests or acceptance evidence.","unknown":"Evidence is absent, stale, contradictory, or insufficient."}},"snapshot_metrics":[{"label":"Captain tools","value":"20","detail":"Typed Bridge tools; raw Read, Write, Edit, Bash, Web, Agent, skills, and plugins absent.","evidence_state":"verified"},{"label":"Captain unit tests","value":"37 / 37","detail":"Fresh local run on 2026-07-11; all passed.","evidence_state":"receipt"},{"label":"Captain live bench","value":"21 / 21","detail":"Historical fresh-session sample across Fable, Opus, and Sonnet; not an uptime guarantee.","evidence_state":"recorded"},{"label":"Bridge tests","value":"19 + 1","detail":"19 passed; one Chrome-dependent modal test skipped because Chrome did not start.","evidence_state":"receipt"},{"label":"Queued staff orders","value":"35","detail":"Precursor collector snapshot; zero correlated reports. Queue receipt is not execution.","evidence_state":"recorded"},{"label":"Ship Computer","value":"OFFLINE","detail":"No service, canonical store, authenticated API, coverage registry, or SSE stream exists.","evidence_state":"verified"}],"command_lineage":["Commodore directive or standing authority","Captain-owned mission","Measurable objective","Typed route and order","Epic, task, subtask, and attempt","Evidence and report","Authorized acceptance decision"],"route_contracts":[{"destination":"Advisor","route":"consultation","cadence":"Direct, iterative thinking loop","current":"Meridian queue exists; synchronous loop is not built."},{"destination":"PA","route":"operations request","cadence":"Personal operations and sourced research","current":"Target Captain/officer rollout is not built."},{"destination":"Personal Engineer","route":"engineering brief","cadence":"Bounded personal tooling and quick builds","current":"Typed placeholder exists; manager and worker loop is unmanned."},{"destination":"Science","route":"broad commission","cadence":"Hours or days, then evidence-backed report","current":"Interim No2 route is queue-only; full S3 is not built."},{"destination":"Chief Engineer","route":"factory work order","cadence":"Ship engineering through the external Incubator PM","current":"Chief Engineer is unmanned; cross-project delivery is not wired."}],"critical_path":[{"id":"phase-0","phase":"Phase 0","name":"Contracts and threat model","artifact_state":"design","operational_state":"not-applicable","evidence_state":"recorded","dependencies":[],"gate":"Ratified schemas, transition registry, identities, routes, truth classes, RBAC, retention, custody, and fixtures reject every orphan or ambiguous authority path.","next":"Create machine-readable schemas, OpenAPI, the field-level RBAC matrix, threat model, and v1 fixtures."},{"id":"phase-1","phase":"Phase 1","name":"Computer core and Captain vertical slice","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","dependencies":["phase-0"],"gate":"One real Captain voyage completes authority, delivery, work, return, decision, redaction, chain verification, recovery, and external-state persistence.","next":"Build the external store, single writer, command ledger/outbox, query index, coverage service, authenticated API, and SSE."},{"id":"phase-2","phase":"Phase 2","name":"Orders, personal cells, Science, and gateways","artifact_state":"design","operational_state":"queue-only","evidence_state":"recorded","dependencies":["phase-1"],"gate":"A personal-cell voyage and a Science voyage remain distinct end to end, preserve root mission, costs, delivery, execution, report, evidence, and acceptance.","next":"Instrument typed transport, boards, Advisors, PAs, Science, models, tools, costs, supervisors, and standing-order runs."},{"id":"phase-3","phase":"Phase 3","name":"Workspace broker and factory route","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","dependencies":["phase-2"],"gate":"Chief Engineer to Incubator PM to isolated factory work to reviewed Shipwright landing is traceable without direct manager access or main-copy writes.","next":"Design and build the single landing broker, workspace identities, handoff adapter, native jj/test/release events, and reconciliation."},{"id":"phase-4","phase":"Phase 4","name":"Hardening and external custody","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","dependencies":["phase-3"],"gate":"An independent verifier accepts restored history and externally held checkpoint continuity after failure and compromise drills.","next":"Add signed external checkpoints, backup/restore, rotation, retention, disk-full, partition, load, and compromised-sensor drills."},{"id":"phase-5","phase":"Phase 5","name":"Bridge source-of-record cutover","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","dependencies":["phase-4"],"gate":"Commodore acceptance, documented rollback, parallel-run parity, and zero unexplained coverage regressions.","next":"Run Computer and legacy collectors in parallel, reconcile discrepancies, then retire duplicate collectors deliberately."}],"bridge_readiness_gate":{"name":"Minimum gate before a real Bridge prototype","status":"not-ready","note":"The former Falcon guardian command-deck concept belongs to the Shipwright Manual. The operational Bridge will be designed from scratch after this gate produces real contracts and a real voyage fixture.","requirements":[{"id":"bridge-contracts","label":"Phase 0 schemas, identities, routes, transitions, truth classes, RBAC, and threat model ratified","met":false},{"id":"bridge-store","label":"External state root, canonical writer, command revision/outbox store, event chain, verifier, and rebuildable index running","met":false},{"id":"bridge-voyage","label":"One real directive-to-acceptance Captain voyage captured without repository telemetry writes","met":false},{"id":"bridge-api","label":"Authenticated status, snapshot, events, correlations, missions, work, deliveries, coverage, and stream contracts operating","met":false},{"id":"bridge-recovery","label":"Redaction, RBAC, replay, deduplication, crash recovery, and visible unknown/gap handling pass","met":false},{"id":"bridge-fixture","label":"The captured voyage becomes the versioned frontend fixture and acceptance baseline","met":false}]},"groups":[{"id":"keel","name":"Keel and governance","summary":"The proven transport, first cell, spend floor, and remaining S1/S2 work.","claims":[{"id":"s1a-locked-transport","capability":"S1a locked transport","owner":"Captain / engineering","artifact_state":"accepted","operational_state":"standby","evidence_state":"verified","summary":"Replacement prompt, complete built-in tool strip, typed MCP surface, model and effort pins, and subscription authentication were proven.","dependencies":[],"blockers":[],"next_gate":"Retain as a regression fixture for every officer harness.","freshness":"Accepted 2026-07-09","evidence":[{"label":"Locked transport findings","path":"ship/bridge-harness/FINDINGS.md","kind":"report","href":"../../ship/bridge-harness/FINDINGS.md"},{"label":"Ship organization design","path":"docs/design/ship-org-design.md","kind":"design","href":"../design/ship-org-design.md"}]},{"id":"s1b-ghost-officer","capability":"S1b ghost officer","owner":"Captain / engineering","artifact_state":"accepted","operational_state":"standby","evidence_state":"verified","summary":"Contract, injection, crash/resume, and idempotency behavior ran against disposable stores without operational authority.","dependencies":["s1a-locked-transport"],"blockers":[],"next_gate":"Keep the full adversarial suite in the officer release gate.","freshness":"Accepted 2026-07-09","evidence":[{"label":"S1b findings","path":"ship/bridge-harness/FINDINGS-s1b.md","kind":"report","href":"../../ship/bridge-harness/FINDINGS-s1b.md"},{"label":"Harness tests","path":"ship/bridge-harness/test","kind":"tests","href":"../../ship/bridge-harness/test"}]},{"id":"s1c-meridian-cell","capability":"S1c Meridian and Advisor PA cell","owner":"Captain / Meridian","artifact_state":"accepted","operational_state":"standby","evidence_state":"verified","summary":"Meridian's five-tool locked seat, separate Brain, PA drain, and first PA-sealed deliberation passed the named gate.","dependencies":["s1a-locked-transport","s1b-ghost-officer"],"blockers":["Captain-to-Advisor synchronous conversation remains unbuilt.","Off-runner Advisor cost data remains incomplete."],"next_gate":"Wire a correlated wake, iterative follow-up, and answer-return loop without adding command authority.","freshness":"Decision 71, 2026-07-10","evidence":[{"label":"S1c implementation design","path":"docs/design/ship-org-s1c-cut.md","kind":"design","href":"../design/ship-org-s1c-cut.md"},{"label":"Advisor pressure test","path":"docs/reviews/advisor-v2-pressure-test.md","kind":"sealed report","href":"../reviews/advisor-v2-pressure-test.md"}]},{"id":"spend-governance","capability":"S-GOV spend governance","owner":"Interim No1 / future Ops and Security","artifact_state":"accepted","operational_state":"standby","evidence_state":"verified","summary":"Grant registry, key inventory, cost ledger, roll-up, spend watch, and three named gates are built; the permanent Ops and Security seats remain unmanned.","dependencies":[],"blockers":["Permanent officer custody and watch ownership are not staffed."],"next_gate":"Transfer custody and monitoring through the S2 officer handoff without losing the single-writer floor.","freshness":"Shipped 2026-07-09","evidence":[{"label":"Implemented S-GOV design","path":"docs/design/implemented/ship-org-sgov.md","kind":"implemented design","href":"../design/implemented/ship-org-sgov.md"},{"label":"Spend governance manual","path":"docs/system/spend-governance.md","kind":"manual","href":"../system/spend-governance.md"},{"label":"Cost ledger","path":"project-management/ledgers/costs.jsonl","kind":"record","href":"../../project-management/ledgers/costs.jsonl"}]},{"id":"s1d-ultra-smoke","capability":"S1d Sonnet Ultra crew smoke","owner":"Engineering","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The 12-plus-agent pinned sweep is specified and remains a gated assumption rather than proven crew capacity.","dependencies":["s1b-ghost-officer"],"blockers":["Board task remains to-do."],"next_gate":"Run the pinned sweep and preserve per-seat evidence, failures, costs, and final adjudication.","freshness":"Board verified 2026-07-11","evidence":[{"label":"Project board","path":"project-management/project.sqlite","kind":"advisory board","href":"../../project-management/project.sqlite"}]},{"id":"s2-officer-handoff","capability":"S2 No1 and officer handoff","owner":"Captain / No1","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The read-only observer through writer-token epoch ladder is designed; the new No1, Chief Engineer line, and repeatable kit are not built.","dependencies":["s1d-ultra-smoke","spend-governance"],"blockers":["Writer-token handoff has not run.","Chief Engineer is unmanned."],"next_gate":"Complete every ladder rung while proving one board writer at every instant.","freshness":"Board verified 2026-07-11","evidence":[{"label":"Ship organization design, build sequence","path":"docs/design/ship-org-design.md","kind":"design","href":"../design/ship-org-design.md"}]}]},{"id":"command-seats","name":"Command seats and ship sections","summary":"Rank, role, runtime, and evidence remain separate; a configured seat is not a staffed seat.","claims":[{"id":"commodore-seat","capability":"Commodore","owner":"Tom Belfort","artifact_state":"accepted","operational_state":"live","evidence_state":"recorded","summary":"Authenticated human flag authority and strategic command source.","dependencies":[],"blockers":[],"next_gate":"Preserve authenticated directives and standing authority in the future Command Graph.","freshness":"Current command structure","evidence":[{"label":"Ship organization design","path":"docs/design/ship-org-design.md","kind":"design of record","href":"../design/ship-org-design.md"}]},{"id":"captain-cockpit","capability":"Canopus, Captain cockpit","owner":"Captain","artifact_state":"built","operational_state":"standby","evidence_state":"verified","summary":"Three model-specific launchers plus the default alias boot a replacement-prompt Agent SDK runtime with 20 typed tools, private board, current, scratchpad, Brain, staff queues, provenance instrumentation, and bounded integrity-checked Captain Shipbook access.","dependencies":["s1a-locked-transport"],"blockers":["Staff queues do not wake recipients automatically.","No instrumented Captain turn event stream has started.","No production S6 migration."],"next_gate":"Run a sustained instrumented watch with correlated staff returns and no false execution claims.","freshness":"37/37 local tests passed 2026-07-11","evidence":[{"label":"Captain harness manual","path":"docs/system/captain-harness-manual.md","kind":"manual","href":"../system/captain-harness-manual.md"},{"label":"Captain harness source","path":"ship/captain-harness","kind":"code","href":"../../ship/captain-harness"},{"label":"Captain harness tests","path":"ship/captain-harness/test","kind":"tests","href":"../../ship/captain-harness/test"}]},{"id":"no1-seat","capability":"No1, First Officer","owner":"Captain","artifact_state":"configured","operational_state":"standby","evidence_state":"recorded","summary":"An interim resumable No1 and local floor records exist. The target locked Commander seat and writer-token handoff are S2 work.","dependencies":["s2-officer-handoff"],"blockers":["Target No1 harness not built.","Current-session liveness is not established by historical registry state."],"next_gate":"Complete the S2 handoff and prove board authority, wake, report, and continuity.","freshness":"No fresh active turn at audit","evidence":[{"label":"No1 current","path":"project-management/CURRENT/no1-current.md","kind":"current","href":"../../project-management/CURRENT/no1-current.md"}]},{"id":"science-seat","capability":"Science Officer / No2","owner":"Captain","artifact_state":"configured","operational_state":"queue-only","evidence_state":"recorded","summary":"An interim No2 route accepts broad commissions, but it does not auto-wake or return a correlated report; the full panel, council, and Ultra S3 department is not built.","dependencies":["phase-2"],"blockers":["No automatic wake/report loop.","No full S3 evidence pipeline."],"next_gate":"Complete one hours-or-days Science voyage with sourced evidence, correlation, and Captain acceptance.","freshness":"Queue state verified 2026-07-11","evidence":[{"label":"Science board","path":"project-management/science/science-board.md","kind":"advisory record","href":"../../project-management/science/science-board.md"},{"label":"Captain routing manual","path":"docs/system/captain-harness-manual.md","kind":"manual","href":"../system/captain-harness-manual.md"}]},{"id":"intelligence-seat","capability":"Intelligence","owner":"No1","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The reconnaissance pyramid and research corpus are designed; the S4 officer, fetch pipeline, and injection-safe provenance path are not built.","dependencies":["phase-2"],"blockers":["No manned officer.","Fetch sanitation and source provenance require implementation."],"next_gate":"Build and test an evidence-preserving reconnaissance voyage.","freshness":"Design snapshot 2026-07-10","evidence":[{"label":"Ship manual","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]},{"id":"security-seat","capability":"Security","owner":"No1","artifact_state":"built","operational_state":"unmanned","evidence_state":"verified","summary":"Security instruments exist through S-GOV, but the commissioned Security Officer is not staffed; interim custody remains outside the target seat.","dependencies":["spend-governance","s2-officer-handoff"],"blockers":["No Security Officer occupant.","Target officer harness and personal cell absent."],"next_gate":"Staff the seat and transfer custody through an audited handoff.","freshness":"Instruments verified 2026-07-09","evidence":[{"label":"Grant registry","path":"project-management/registry/grants.md","kind":"record","href":"../../project-management/registry/grants.md"},{"label":"Inventory","path":"project-management/registry/inventory.md","kind":"record","href":"../../project-management/registry/inventory.md"}]},{"id":"ops-seat","capability":"Operations","owner":"No1","artifact_state":"built","operational_state":"unmanned","evidence_state":"verified","summary":"Cost, roll-up, and watch instruments exist; the permanent Operations Officer and complete operational department are not staffed.","dependencies":["spend-governance","s2-officer-handoff"],"blockers":["No Operations Officer occupant."],"next_gate":"Staff the seat and prove cost, resource, and service operations during a live voyage.","freshness":"Instruments verified 2026-07-09","evidence":[{"label":"Spend governance manual","path":"docs/system/spend-governance.md","kind":"manual","href":"../system/spend-governance.md"}]},{"id":"comms-seat","capability":"Communications","owner":"No1","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The seat is explicitly deferred until the first sustained external-output mission; only chartered carve-outs exist now.","dependencies":["s2-officer-handoff"],"blockers":["Activation trigger has not fired.","No occupant or harness."],"next_gate":"Stand up at or before the first sustained external-output mission and prove outbound review and provenance.","freshness":"Design snapshot 2026-07-10","evidence":[{"label":"Ship organization design","path":"docs/design/ship-org-design.md","kind":"design","href":"../design/ship-org-design.md"}]},{"id":"tactical-seat","capability":"Tactical","owner":"No1","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The seat is deferred behind staffed Operations and Security custody; no runtime capability is claimed.","dependencies":["security-seat","ops-seat"],"blockers":["Operations and Security are unmanned."],"next_gate":"Ratify a mission need and activate only after the custody gate is staffed.","freshness":"Design snapshot 2026-07-10","evidence":[{"label":"Ship manual","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]},{"id":"counsellor-seat","capability":"Counsellor / Doctor","owner":"No1","artifact_state":"configured","operational_state":"standby","evidence_state":"recorded","summary":"A legacy resumable Doctor seat and current exist; the target S5 locked Counsellor with complete reach and intervention mechanics is not built.","dependencies":["phase-2"],"blockers":["Target S5 harness and reach mechanics absent."],"next_gate":"Prove bounded intervention, records, escalation, and separation from CMO detection.","freshness":"No fresh active turn at audit","evidence":[{"label":"Doctor current","path":"project-management/CURRENT/doctor-current.md","kind":"current","href":"../../project-management/CURRENT/doctor-current.md"}]},{"id":"cmo-seat","capability":"Chief Medical Officer","owner":"No1","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"The system-health and observability role is designed separately from Counsellor treatment; the seat, privacy matrix, and complete observability surface do not exist.","dependencies":["phase-2","phase-1"],"blockers":["Ship Computer observability is absent.","Field-level privacy policy remains unratified."],"next_gate":"Ratify privacy scope and prove detection against a real, permission-filtered event surface.","freshness":"Design snapshot 2026-07-10","evidence":[{"label":"Ship Computer design","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"chief-engineer-seat","capability":"Chief Engineer","owner":"Captain","artifact_state":"configured","operational_state":"unmanned","evidence_state":"recorded","summary":"A typed destination exists, but no commissioned occupant or wake/report loop consumes it. The Chief Engineer is distinct from the Incubator PM.","dependencies":["s2-officer-handoff","phase-3"],"blockers":["No occupant.","No cross-project handoff adapter.","No correlated factory return."],"next_gate":"Man the seat and prove one logged handoff and evidence-backed return through the distinct Incubator PM.","freshness":"Queue endpoint verified 2026-07-11","evidence":[{"label":"Ship manual, engineering topology","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"},{"label":"Ship Computer engineering handoff","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]}]},{"id":"personal-cells","name":"Personal cells","summary":"Every Captain and commissioned officer eventually receives Thinking, Operations, and Engineering without confusing personal staff with ship departments.","claims":[{"id":"captain-advisor","capability":"Captain Advisor / mini-Science","owner":"Captain","artifact_state":"built","operational_state":"queue-only","evidence_state":"verified","summary":"Meridian's narrow locked seat is proven. The target direct conversational loop, own board, own scratchpad, and thinking-team orchestration are incomplete.","dependencies":["s1c-meridian-cell","phase-2"],"blockers":["Consult does not wake or return synchronously.","Target Advisor board and thinking-team tools absent."],"next_gate":"Complete a correlated multi-turn thought loop and preserve thread, cost, and answer receipt.","freshness":"Precursor accepted 2026-07-10","evidence":[{"label":"Personal-department configuration","path":"config/ship-personal-departments.json","kind":"target configuration","href":"../../config/ship-personal-departments.json"}]},{"id":"captain-thinking-team","capability":"Advisor thinking partners","owner":"Captain Advisor","artifact_state":"configured","operational_state":"unmanned","evidence_state":"configured","summary":"Opus, Fable, GLM, and Terra candidate slots are declared disabled. No slot funding, custom harness, web boundary, board, or live orchestration exists.","dependencies":["captain-advisor","phase-2"],"blockers":["All candidate slots disabled.","Harness and grants unratified."],"next_gate":"Ratify a bounded per-ship roster and prove specialization, parallel critique, judging, and synthesis within budget.","freshness":"Configuration verified 2026-07-11","evidence":[{"label":"Personal-department configuration","path":"config/ship-personal-departments.json","kind":"configuration","href":"../../config/ship-personal-departments.json"}]},{"id":"captain-pa","capability":"Captain PA / mini-Ops","owner":"Captain","artifact_state":"configured","operational_state":"unmanned","evidence_state":"configured","summary":"The Captain PA route is a target. Meridian's PA is a separate live precursor and does not prove the Captain/officer PA rollout.","dependencies":["phase-2"],"blockers":["No Captain PA occupant or operator team.","No officer-scoped human-brain rollout."],"next_gate":"Prove one bounded research or operations request through the Captain PA and its team with receipts and Brain namespace isolation.","freshness":"Target configuration 2026-07-10","evidence":[{"label":"Ship manual, PA contract","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]},{"id":"meridian-pa","capability":"Meridian's PA precursor","owner":"Meridian","artifact_state":"accepted","operational_state":"standby","evidence_state":"verified","summary":"The fenced PA completed stage, ratify, Brain write, verbatim land, and seal; it is not the universal officer PA kit.","dependencies":["s1c-meridian-cell"],"blockers":["Interim permission fence remains migration debt."],"next_gate":"Replace the interim fence with the final posture and retain fail-closed negative tests.","freshness":"Accepted 2026-07-10","evidence":[{"label":"PA lane implementation","path":"ship/bridge-harness/pa/pa-lane.mjs","kind":"code","href":"../../ship/bridge-harness/pa/pa-lane.mjs"}]},{"id":"captain-personal-engineer","capability":"Captain Personal Engineer / mini-Engineering","owner":"Captain","artifact_state":"configured","operational_state":"unmanned","evidence_state":"configured","summary":"A typed placeholder route exists. No Lieutenant manager, officer-scoped board, isolated worker pool, review loop, or report return is live.","dependencies":["phase-2","phase-3"],"blockers":["Manager pattern not instantiated.","Single landing broker absent."],"next_gate":"Build one bounded personal tool through a manager and isolated Ensign, then independently verify and return it.","freshness":"Target configuration 2026-07-10","evidence":[{"label":"Personal-department configuration","path":"config/ship-personal-departments.json","kind":"configuration","href":"../../config/ship-personal-departments.json"}]},{"id":"officer-cell-rollout","capability":"Repeated officer personal-cell rollout","owner":"Captain / No1","artifact_state":"configured","operational_state":"unmanned","evidence_state":"configured","summary":"Eleven Captain/officer cell declarations exist. No end-to-end repeatable kit, per-seat slot system, wake loop, namespace enforcement, or full rollout exists.","dependencies":["captain-thinking-team","captain-pa","captain-personal-engineer"],"blockers":["The Captain template itself is incomplete.","No rollout acceptance suite."],"next_gate":"Finish and prove the Captain template, then roll out one officer at a time with negative cross-namespace tests.","freshness":"Configuration verified 2026-07-11","evidence":[{"label":"Personal-department configuration","path":"config/ship-personal-departments.json","kind":"configuration","href":"../../config/ship-personal-departments.json"},{"label":"Ship manual, personal cell","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]}]},{"id":"factory","name":"Engineering and factory route","summary":"Personal engineering, Shipwright's local floor, and the external Incubator are three distinct boundaries.","claims":[{"id":"local-execution-floor","capability":"Shipwright local execution floor","owner":"Interim No1 / project managers","artifact_state":"built","operational_state":"standby","evidence_state":"recorded","summary":"The repository has ten configured manager roles, worker types, boards, run records, panel artifacts, and a proven manager-worker pattern. Current activity must be established from fresh runner evidence, not configuration.","dependencies":[],"blockers":["This floor is not the Chief Engineer and not the external Incubator PM."],"next_gate":"Migrate native supervisor and board events into the Ship Computer without changing command boundaries.","freshness":"Artifacts inspected 2026-07-11","evidence":[{"label":"Agent roster","path":"config/agents.json","kind":"configuration","href":"../../config/agents.json"},{"label":"Manager boards","path":"project-management/boards","kind":"records","href":"../../project-management/boards"},{"label":"Run records","path":"project-management/runs","kind":"records","href":"../../project-management/runs"}]},{"id":"incubator-factory","capability":"External Incubator PM and factory","owner":"Incubator PM","artifact_state":"built","operational_state":"standby","evidence_state":"reported","summary":"The external project and its distinct PM/factory exist and are human-loadable. Shipwright has no commissioned automatic line into its managers.","dependencies":[],"blockers":["No Shipwright-owned cross-project receipt or handoff adapter."],"next_gate":"Prove a typed Chief Engineer handoff without direct Shipwright access to Incubator managers.","freshness":"Boundary recorded 2026-07-10","evidence":[{"label":"Ship manual, external factory","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]},{"id":"chief-engineer-factory-route","capability":"Chief Engineer to Incubator PM route","owner":"Chief Engineer","artifact_state":"design","operational_state":"unmanned","evidence_state":"verified","summary":"The command boundary and implementation package are specified. There is no live delivery, receipt, build return, acceptance report, or landing correlation.","dependencies":["chief-engineer-seat","incubator-factory","phase-3"],"blockers":["Chief Engineer unmanned.","Cross-project adapter absent.","Landing broker absent."],"next_gate":"Trace one real design package through PM acceptance, isolated build, evidence return, Chief Engineer review, and trusted landing.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Ship Computer engineering handoff","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"workspace-isolation","capability":"Per-agent isolated write workspaces","owner":"Chief Engineer / landing broker","artifact_state":"configured","operational_state":"degraded","evidence_state":"recorded","summary":"The target forbids AI write access to the main copy and requires one isolated jj workspace per writer. Existing shared-working-copy and PA-sealing paths remain migration debt.","dependencies":["phase-3"],"blockers":["Policy is not enforced end to end.","Broker identity, custody, schema, failover, and negative tests are absent."],"next_gate":"Build the broker and prove main-copy denial, serialized integration, cleanup, and recovery.","freshness":"Configuration and gap verified 2026-07-11","evidence":[{"label":"Personal-department workspace policy","path":"config/ship-personal-departments.json","kind":"configuration","href":"../../config/ship-personal-departments.json"},{"label":"VCS and release model","path":"docs/system/vcs-release-model.md","kind":"manual","href":"../system/vcs-release-model.md"}]},{"id":"landing-broker","capability":"Single trusted landing broker","owner":"Unassigned external custody","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No design of record or implementation proves a single broker can validate scope, tests, evidence, change identity, serialization, and cleanup.","dependencies":["phase-3","workspace-isolation"],"blockers":["Owner and custody unratified.","No schemas, queue, failover, or tests."],"next_gate":"Ratify the design and run positive, negative, crash, and custody-loss fixtures.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Ship manual readiness map","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"}]}]},{"id":"command-graph","name":"Command Graph and work flow","summary":"Authority, execution, and return are distinct planes; current queues are precursors, not the canonical graph.","claims":[{"id":"flat-staff-queues","capability":"Current typed staff queues","owner":"Captain harness","artifact_state":"built","operational_state":"queue-only","evidence_state":"recorded","summary":"Recipient-specific JSONL inboxes accept bounded envelopes and return IDs. At the audit snapshot, 35 orders were queued and none had a correlated report.","dependencies":["captain-cockpit"],"blockers":["No automatic wake.","No durable delivery acknowledgement.","Latest report lookup is not envelope-addressed."],"next_gate":"Move envelope creation, revision, delivery, ack, report, and acceptance into the transactional ledger.","freshness":"Collector snapshot 2026-07-11","evidence":[{"label":"Captain staff implementation","path":"ship/captain-harness/src/staff.mjs","kind":"code","href":"../../ship/captain-harness/src/staff.mjs"},{"label":"Staff tests","path":"ship/captain-harness/test/staff.test.mjs","kind":"tests","href":"../../ship/captain-harness/test/staff.test.mjs"}]},{"id":"canonical-command-graph","capability":"Canonical no-loss Command Graph","owner":"Ship Computer","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No canonical directive, standing order, mission, objective, order, execution, return, and acceptance revision ledger exists.","dependencies":["phase-0","phase-1"],"blockers":["Schemas and transition registry unratified.","Command store and writer absent."],"next_gate":"Implement one primary parent, one Captain-owned root mission, typed transitions, immutable revisions, and lineage audits.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Command Graph specification","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"standing-order-runs","capability":"Versioned standing-order definitions and runs","owner":"Ship Computer / Captain","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"There is no versioned definition, occurrence key, trigger ledger, missed-trigger detection, duplicate suppression, or run outcome store.","dependencies":["canonical-command-graph"],"blockers":["Command ledger absent."],"next_gate":"Pass activation, hold, revocation, expiry, recurrence, duplicate, missed-trigger, and mission-attachment fixtures.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Standing-order design","path":"docs/design/standing-orders.md","kind":"design","href":"../design/standing-orders.md"}]},{"id":"board-projections","capability":"Rebuildable officer and department board projections","owner":"Ship Computer projectors","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"Current SQLite boards are advisory records. They are not projections from immutable command revisions and cannot create authority.","dependencies":["canonical-command-graph"],"blockers":["No ledger sequence, row digest, transactional outbox, or reconciliation."],"next_gate":"Project open work into destination boards and detect missing, extra, and divergent rows.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Board model","path":"docs/system/board-model.md","kind":"current model","href":"../system/board-model.md"},{"label":"Command projection design","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]}]},{"id":"computer-api","name":"Ship Computer and API","summary":"Current repository collectors are migration precursors. Every canonical Computer component below is still a target.","claims":[{"id":"legacy-bridge-normalizer","capability":"Current Bridge normalizer and local API","owner":"Shipwright local Bridge","artifact_state":"built","operational_state":"standby","evidence_state":"verified","summary":"The read-mostly local server normalizes repository ledgers, queues, boards, runner records, Brain mtimes, and topology into snapshot, event, order, actor, and trace views.","dependencies":[],"blockers":["No authentication or RBAC.","No canonical store.","No SSE.","Mutable heterogeneous sources.","Two local POST routes remain outside the target command API."],"next_gate":"Keep it behind a migration feature flag and compare against native Computer projections before retirement.","freshness":"19 tests passed; one browser test skipped 2026-07-11","evidence":[{"label":"Bridge server","path":"src/bridge/bridge-server.mjs","kind":"code","href":"../../src/bridge/bridge-server.mjs"},{"label":"Bridge provenance normalizer","path":"src/bridge/provenance.mjs","kind":"code","href":"../../src/bridge/provenance.mjs"},{"label":"Bridge tests","path":"src/bridge","kind":"tests and code","href":"../../src/bridge"}]},{"id":"project-dashboard-api","capability":"Project dashboard API precursor","owner":"Project management system","artifact_state":"built","operational_state":"standby","evidence_state":"recorded","summary":"A separate read-only localhost API exposes board, VCS, manager, panel, and agent state with ETag polling and jailed document reads. It is not the Ship Computer API.","dependencies":[],"blockers":["Repository-scoped collector, not canonical ship telemetry.","No Ship Computer identities, ingest, command transactions, or SSE."],"next_gate":"Reuse bounded collectors and fixtures where valid; do not preserve its API as the target contract by accident.","freshness":"As-built contract inspected 2026-07-11","evidence":[{"label":"Dashboard API manual","path":"docs/system/dashboard-api.md","kind":"as-built contract","href":"../system/dashboard-api.md"}]},{"id":"computer-external-store","capability":"External canonical event and command store","owner":"Ship Computer service","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No external state root, append-only segments, command SQLite, query index, spool, quarantine, runtime registry, or service account exists.","dependencies":["phase-0"],"blockers":["Storage, retention, encryption, key custody, and migration contracts unimplemented."],"next_gate":"Create mode-restricted external state and prove append, fsync, replay, index rebuild, and restore.","freshness":"Filesystem absence verified 2026-07-11","evidence":[{"label":"External store specification","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"computer-single-writer","capability":"Canonical validator, redactor, deduplicator, and chain writer","owner":"Ship Computer service","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"The single accepted-observation writer and its deterministic append transaction are not implemented.","dependencies":["computer-external-store"],"blockers":["No service process, schema registry, checkpoint format, or startup verifier."],"next_gate":"Pass duplicate, conflicting duplicate, crash-before/after-sync, invalid-head, and closed-segment fixtures.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Writer and integrity specification","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"sensor-ingestion","capability":"Authenticated sensor ingestion and durable spools","owner":"Ship Computer sensors","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No per-sensor credentials, ingest endpoint, producer policy, redaction intake, durable replay spool, backpressure, or quarantine operates.","dependencies":["computer-single-writer"],"blockers":["Sensor inventory and credential plan not ratified."],"next_gate":"Instrument the Captain first, then prove at-least-once replay and fail-closed side effects under Computer outage.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Sensor specification","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"computer-query-api","capability":"Authenticated query, command, and ingest API","owner":"Ship Computer service","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"The `/api/v1` status, snapshot, event, correlation, actor, mission, standing order, work, delivery, task, workspace, cost, coverage, command transaction, and ingest contracts are design only.","dependencies":["computer-single-writer","canonical-command-graph","sensor-ingestion"],"blockers":["No OpenAPI, identity broker, authorization engine, or service."],"next_gate":"Generate a machine-readable contract and pass field-scope, cursor-binding, idempotency, and cross-capability denial tests.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"API specification","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"computer-live-stream","capability":"Authorized SSE stream","owner":"Ship Computer service","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"There is no accepted-sequence SSE channel, authorized compact delta, resume window, snapshot-required fallback, or degraded polling state.","dependencies":["computer-query-api"],"blockers":["Canonical accepted sequence and query authorization absent."],"next_gate":"Prove resume, scope filtering, heartbeat semantics, stream expiry, and bounded polling fallback.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"SSE contract","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"coverage-registry","capability":"Sensor registry and coverage health","owner":"Ship Computer service","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No authoritative registry identifies expected sensors, owners, last-seen sequence, lag, failure, exclusions, or blind spots.","dependencies":["sensor-ingestion"],"blockers":["Required inventory and freshness policies not machine-readable."],"next_gate":"Make every expected sensor and every intentional exclusion visible, testable, and queryable.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Coverage design","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"computer-rbac-redaction","capability":"Field-level RBAC and redaction","owner":"Ship Computer security","artifact_state":"design","operational_state":"unmanned","evidence_state":"recorded","summary":"Initial role profiles and redaction rules are written. The field matrix, credentials, policy engine, secret corpus, privacy decisions, and adversarial proof are not ratified or built.","dependencies":["phase-0","computer-query-api"],"blockers":["Commodore, Captain, Security, CMO, and personal-cognition field scopes remain unresolved."],"next_gate":"Ratify exact fields per capability and prove secrets and narrower-role content never reach store, response, log, or HTML.","freshness":"Design inspected 2026-07-11","evidence":[{"label":"RBAC and redaction design","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]}]},{"id":"provenance","name":"Provenance and observable truth","summary":"Evidence classes must stay visible; recorded bytes do not prove every underlying claim.","claims":[{"id":"captain-provenance-code","capability":"Captain observable turn and tool provenance","owner":"Captain harness","artifact_state":"built","operational_state":"standby","evidence_state":"verified","summary":"Mode-restricted, redacted, correlated, hash-chained provenance code and tests exist for turns, providers, tools, completion, refusal, and uncertain audit failure.","dependencies":["captain-cockpit"],"blockers":["No real `events.jsonl` has been produced by an instrumented Captain turn."],"next_gate":"Run the next live Captain watch through instrumentation and verify the resulting chain independently.","freshness":"Tests passed 2026-07-11; stream not started","evidence":[{"label":"Captain provenance implementation","path":"ship/captain-harness/src/provenance.mjs","kind":"code","href":"../../ship/captain-harness/src/provenance.mjs"},{"label":"Captain provenance tests","path":"ship/captain-harness/test/provenance.test.mjs","kind":"tests","href":"../../ship/captain-harness/test/provenance.test.mjs"}]},{"id":"captain-event-stream","capability":"Live Captain event stream","owner":"Captain harness","artifact_state":"absent","operational_state":"unknown","evidence_state":"verified","summary":"The expected `project-management/bridge/captain/events.jsonl` file is absent; chain status is not-started and historical activity is not backfilled.","dependencies":["captain-provenance-code"],"blockers":["No instrumented live turn has emitted the file."],"next_gate":"Capture one full turn and show valid count, head hash, correlations, redactions, and coverage age.","freshness":"Filesystem verified 2026-07-11","evidence":[{"label":"Captain bridge state directory","path":"project-management/bridge/captain","kind":"state directory","href":"../../project-management/bridge/captain"}]},{"id":"legacy-provenance-projection","capability":"Legacy repository-source provenance projection","owner":"Current Bridge","artifact_state":"built","operational_state":"degraded","evidence_state":"recorded","summary":"The current collector labels recorded, derived, and configured events across queues, runner artifacts, panels, costs, Brain mtimes, and state writes. It is useful but incomplete and mutable.","dependencies":["legacy-bridge-normalizer"],"blockers":["No authenticated producers.","No immutable accepted sequence.","Brain events are mtime-derived.","Repository sources can drift."],"next_gate":"Treat each collector as a versioned migration sensor and replace it with native emitters after parity tests.","freshness":"349-event precursor snapshot 2026-07-11","evidence":[{"label":"Bridge provenance normalizer","path":"src/bridge/provenance.mjs","kind":"code","href":"../../src/bridge/provenance.mjs"}]},{"id":"external-checkpoints","capability":"Externally held signed checkpoints","owner":"External custodian","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"No external checkpoint custody prevents a fully compromised local service account from rewriting retained history.","dependencies":["computer-single-writer","phase-4"],"blockers":["Custodian, signing keys, publication cadence, and verifier unratified."],"next_gate":"Publish and restore across an externally held chain head, then verify continuity independently.","freshness":"Absence verified 2026-07-11","evidence":[{"label":"Checkpoint design","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]}]},{"id":"manuals","name":"Manuals and role knowledge","summary":"The human, Captain, and department views must share facts without sharing the same reading depth.","claims":[{"id":"human-ship-manual","capability":"Full human Shipwright Manual","owner":"Captain / documentation","artifact_state":"built","operational_state":"not-applicable","evidence_state":"verified","summary":"A consolidated Markdown manual and interactive HTML companion exist, covering command, seats, personal cells, factory, access, provenance, Computer, graph, readiness, and the complete Captain/officer manual library.","dependencies":[],"blockers":["The HTML companion is hand-maintained and can drift from the Markdown source and generated build register."],"next_gate":"Add a structural drift check for the HTML companion while keeping the build register and Shipbook checks in every documentation acceptance path.","freshness":"Browser and source links verified 2026-07-11","evidence":[{"label":"Canonical ship manual","path":"docs/system/ship-manual.md","kind":"manual","href":"../system/ship-manual.md"},{"label":"Interactive human manual","path":"docs/viewers/ship-manual.html","kind":"viewer","href":"ship-manual.html"}]},{"id":"building-page","capability":"Human Building page","owner":"Documentation / frontend","artifact_state":"built","operational_state":"not-applicable","evidence_state":"verified","summary":"This generated page reports the full build without pretending it is live Ship Computer telemetry or assigning a fake overall percentage.","dependencies":["human-ship-manual"],"blockers":["It remains a static snapshot until native Computer readiness projections exist."],"next_gate":"Regenerate on accepted build changes; later consume authenticated Computer readiness projections.","freshness":"Generated 2026-07-11","evidence":[{"label":"Canonical build register","path":"docs/system/ship-build-register.json","kind":"machine-readable register","href":"../system/ship-build-register.json"},{"label":"Building page renderer","path":"scripts/render-ship-building.mjs","kind":"generator","href":"../../scripts/render-ship-building.mjs"}]},{"id":"captain-shipbook","capability":"Captain's Shipbook","owner":"Captain / Captain PA","artifact_state":"built","operational_state":"not-applicable","evidence_state":"verified","summary":"The generated Captain volume embeds the canonical whole-ship manual, shared officer operating standard, and all ten department books byte-for-byte. The Captain harness exposes its verified index and enum-bounded whole sections through read-only ship.knowledge without raw path access.","dependencies":["human-ship-manual"],"blockers":["The generated volume must be rerun whenever an embedded source changes."],"next_gate":"Run the deterministic shipbook freshness check in every manual-affecting acceptance path.","freshness":"Generated and checked 2026-07-11","evidence":[{"label":"Captain Shipbook","path":"docs/shipbook/shipbook-captain.md","kind":"manual","href":"../shipbook/shipbook-captain.md"},{"label":"Captain harness manual","path":"docs/system/captain-harness-manual.md","kind":"manual","href":"../system/captain-harness-manual.md"},{"label":"Bounded Shipbook knowledge implementation","path":"ship/captain-harness/src/knowledge.mjs","kind":"code","href":"../../ship/captain-harness/src/knowledge.mjs"}]},{"id":"officer-common-manual","capability":"Common officer manual","owner":"Captain / documentation","artifact_state":"built","operational_state":"not-applicable","evidence_state":"verified","summary":"The shared officer operating standard teaches rank, authority, routing, personal Thinking/Operations/Engineering cells, boards, evidence duties, failure procedure, and the distinction between documented routes and runtime enforcement.","dependencies":["captain-shipbook"],"blockers":["Most officer endpoints and routes remain target or configured rather than runtime-enforced."],"next_gate":"Update the operating standard alongside each ratified runtime route or authority change.","freshness":"Generated source verified 2026-07-11","evidence":[{"label":"Shared officer operating standard","path":"docs/shipbook/shared/officer-operating-standard.md","kind":"manual","href":"../shipbook/shared/officer-operating-standard.md"},{"label":"Officer contact route registry","path":"config/ship-officer-routes.json","kind":"machine-readable design registry","href":"../../config/ship-officer-routes.json"}]},{"id":"department-manuals","capability":"Department manuals","owner":"Each department officer","artifact_state":"built","operational_state":"not-applicable","evidence_state":"verified","summary":"Ten atomic department books cover mission, seats, command boundaries, exact officer contacts, personal cells, tools, boards, costs, provenance, failure doctrine, and current-versus-target state.","dependencies":["officer-common-manual"],"blockers":["Most departments are not yet manned or fully implemented; the books describe those gaps explicitly."],"next_gate":"Require each department build slice to update its source book and pass deterministic Captain-volume assembly.","freshness":"Ten books generated and checked 2026-07-11","evidence":[{"label":"Department manual index","path":"docs/shipbook/README.md","kind":"charter","href":"../shipbook/README.md"},{"label":"Shipbook renderer and validator","path":"scripts/render-shipbooks.mjs","kind":"generator","href":"../../scripts/render-shipbooks.mjs"}]}]},{"id":"bridge","name":"Bridge and future command surfaces","summary":"The Manual owns the commissioned Falcon imagery. The operational Bridge starts again from real data and a real API.","claims":[{"id":"manual-visual-system","capability":"Falcon Manual visual system","owner":"Codex Frontend Manager / documentation","artifact_state":"built","operational_state":"not-applicable","evidence_state":"recorded","summary":"The cinematic Falcon guardian and guardian command-deck direction are assigned to the Shipwright Manual and its editorial/building surfaces, not the operational Bridge.","dependencies":["human-ship-manual"],"blockers":[],"next_gate":"Keep manual and operational Bridge identities distinct as both evolve.","freshness":"Direction corrected 2026-07-11","evidence":[{"label":"Shipwright Manual viewer","path":"docs/viewers/ship-manual.html","kind":"viewer","href":"ship-manual.html"},{"label":"Existing guardian asset","path":"docs/viewers/assets/ship-manual-falcon-guardian.webp","kind":"visual asset","href":"assets/ship-manual-falcon-guardian.webp"}]},{"id":"future-shipwright-bridge","capability":"Future Shipwright Bridge","owner":"Codex Frontend Manager / Chief Engineer","artifact_state":"absent","operational_state":"unmanned","evidence_state":"verified","summary":"The operational Bridge requires a complete from-scratch product and visual design. It will not reuse the Manual page as its shell or treat fixture data as live.","dependencies":["phase-1","bridge-contracts","bridge-voyage","bridge-api","bridge-recovery","bridge-fixture"],"blockers":["Minimum Bridge readiness gate is entirely unmet.","No real Computer-backed voyage fixture."],"next_gate":"After the minimum gate passes, design desktop and mobile operational flows against the real API and evidence semantics.","freshness":"Direction corrected 2026-07-11","evidence":[{"label":"Bridge frontend requirements","path":"docs/design/ship-computer-bridge-frontend-plan.md","kind":"requirements requiring re-grounded visual direction","href":"../design/ship-computer-bridge-frontend-plan.md"},{"label":"Ship Computer architecture","path":"docs/design/ship-computer-design.md","kind":"design","href":"../design/ship-computer-design.md"}]},{"id":"falcon-command-hq","capability":"Future Falcon Command headquarters","owner":"Commodore","artifact_state":"design","operational_state":"unmanned","evidence_state":"configured","summary":"Falcon Command is reserved for a later fleet-level headquarters with a Command Computer, every ship Bridge, cross-ship visibility, and ship communications. It is not the Shipwright Bridge.","dependencies":["future-shipwright-bridge"],"blockers":["No fleet-level product or Command Computer design is commissioned in this build."],"next_gate":"Preserve the name and boundary; design only after at least one Ship Computer-backed Bridge is operational.","freshness":"Future note recorded 2026-07-10","evidence":[{"label":"Fleet command design","path":"docs/design/fleet-command.md","kind":"related future design","href":"../design/fleet-command.md"}]}]}],"known_register_issues":[{"severity":"high","title":"Ship Computer board epic absent","detail":"The design index names a `ship-computer` epic, but no such board item exists. Implementation must not begin as untracked work."},{"severity":"high","title":"Bridge naming conflict on the board","detail":"The `bridge-buildout` epic still assigns cross-ship fleet visibility to Shipwright's Bridge. The newer boundary reserves that product for future Falcon Command. Supersede or amend the board record before using it."},{"severity":"medium","title":"Broken board evidence paths","detail":"`bridge-buildout` and `activity-feed-board-source` point to missing active design documents; `ship-org-sgov` points to its old path instead of `docs/design/implemented/ship-org-sgov.md`."},{"severity":"medium","title":"Historical build-state copy drifts","detail":"The older build-state page reports 31 Captain tests and historical RUNNING seats. Fresh verification is 37 tests, and runtime state must come from fresh evidence rather than static labels."},{"severity":"high","title":"Queued work has no correlated return","detail":"The precursor snapshot found 35 queued staff orders and zero correlated reports. Do not interpret order volume as execution capacity."},{"severity":"high","title":"Observability remains bounded by mutable sources","detail":"Current repository collectors are useful migration evidence, but there is no authenticated producer identity, immutable accepted sequence, complete coverage registry, or external checkpoint custody."}],"source_priority":["Accepted Ship Computer records and receipts, once the Computer exists","Named acceptance tests, sealed artifacts, and independently checkable receipts","Durable source-boundary records with explicit truth class","Advisory board and current-state records","Configuration and design targets","Unverified prose or recollection"]}</script>
+  <script>
+    (() => {
+      "use strict";
+      const data = JSON.parse(document.getElementById("build-register").textContent);
+      const allClaims = data.groups.flatMap(group => group.claims.map(claim => ({ ...claim, group_id: group.id, group_name: group.name })));
+      const claimById = new Map(allClaims.map(claim => [claim.id, claim]));
+      const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+      const title = value => String(value || "").replace(/(^|-)([a-z])/g, (_, dash, char) => `${dash ? " " : ""}${char.toUpperCase()}`);
+      const badge = (axis, value) => `<span class="badge" data-value="${esc(value)}" title="${esc(data.status_axes[axis]?.[value] || "")}">${esc(axis)} · ${esc(title(value))}</span>`;
+      const badges = item => `<div class="badge-row">${badge("artifact", item.artifact_state)}${badge("operational", item.operational_state)}${badge("evidence", item.evidence_state)}</div>`;
+
+      document.getElementById("status-note").textContent = data.status_note;
+      document.getElementById("status-note-title").textContent = data.ship_computer_connected ? "Ship Computer connected" : "Ship Computer not connected";
+
+      document.getElementById("metrics").innerHTML = data.snapshot_metrics.map(metric => `<article class="metric"><b>${esc(metric.value)}</b><span>${esc(metric.label)}</span><p>${esc(metric.detail)}</p></article>`).join("");
+
+      const axisOrder = ["artifact", "operational", "evidence"];
+      document.getElementById("axes").innerHTML = axisOrder.map(axis => `<article class="axis"><h3>${esc(title(axis))} state</h3><dl>${Object.entries(data.status_axes[axis]).map(([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl></article>`).join("");
+
+      document.getElementById("lineage").innerHTML = data.command_lineage.map((step, index) => `<div class="lineage-step"><span>${String(index + 1).padStart(2, "0")}</span><b>${esc(step)}</b></div>`).join("");
+
+      document.getElementById("phases").innerHTML = data.critical_path.map(phase => `<article class="phase"><span class="phase-num">${esc(phase.phase)}</span><h3>${esc(phase.name)}</h3>${badges(phase)}<p class="next"><b>Gate</b><br>${esc(phase.gate)}</p><p class="next"><b>Next</b><br>${esc(phase.next)}</p></article>`).join("");
+
+      document.getElementById("route-rows").innerHTML = data.route_contracts.map(route => `<tr><td>${esc(route.destination)}</td><td><code>${esc(route.route)}</code></td><td>${esc(route.cadence)}</td><td>${esc(route.current)}</td></tr>`).join("");
+
+      const groupSelect = document.getElementById("group-select");
+      groupSelect.insertAdjacentHTML("beforeend", data.groups.map(group => `<option value="${esc(group.id)}">${esc(group.name)}</option>`).join(""));
+
+      const claimGroups = document.getElementById("claim-groups");
+      claimGroups.innerHTML = data.groups.map(group => `<section class="claim-group" data-group="${esc(group.id)}"><div class="claim-group-head"><h3>${esc(group.name)}</h3><p>${esc(group.summary)}</p></div><div class="claim-grid">${group.claims.map(claim => `<article class="claim" data-claim="${esc(claim.id)}"><div class="claim-top"><div><h4>${esc(claim.capability)}</h4><div class="claim-owner">${esc(claim.owner)}</div></div></div><div style="margin-top:10px">${badges(claim)}</div><p class="claim-summary">${esc(claim.summary)}</p>${claim.blockers.length ? `<div class="claim-alert">${claim.blockers.length} named blocker${claim.blockers.length === 1 ? "" : "s"}</div>` : ""}<div class="claim-meta"><span class="claim-fresh">${esc(claim.freshness)}</span><button class="claim-open" type="button" data-open-claim="${esc(claim.id)}">Inspect</button></div></article>`).join("")}</div></section>`).join("");
+
+      const filterButtons = [...document.querySelectorAll("[data-filter]")];
+      const search = document.getElementById("claim-search");
+      let activeFilter = "all";
+      const targetStates = new Set(["absent", "design", "configured"]);
+      const isUnverified = claim => ["configured", "reported", "unknown"].includes(claim.evidence_state);
+      const matchesFilter = claim => {
+        if (activeFilter === "all") return true;
+        if (activeFilter === "built") return ["built", "accepted"].includes(claim.artifact_state);
+        if (activeFilter === "live") return claim.operational_state === "live";
+        if (activeFilter === "queue-only") return claim.operational_state === "queue-only";
+        if (activeFilter === "target") return targetStates.has(claim.artifact_state);
+        if (activeFilter === "blocked") return claim.blockers.length > 0;
+        if (activeFilter === "unverified") return isUnverified(claim);
+        return true;
+      };
+      const applyFilters = () => {
+        const query = search.value.trim().toLowerCase();
+        const selectedGroup = groupSelect.value;
+        let visible = 0;
+        document.querySelectorAll(".claim-group").forEach(groupEl => {
+          let groupVisible = 0;
+          groupEl.querySelectorAll(".claim").forEach(claimEl => {
+            const claim = claimById.get(claimEl.dataset.claim);
+            const haystack = JSON.stringify(claim).toLowerCase();
+            const show = (selectedGroup === "all" || claim.group_id === selectedGroup) && matchesFilter(claim) && (!query || haystack.includes(query));
+            claimEl.hidden = !show;
+            if (show) { groupVisible += 1; visible += 1; }
+          });
+          groupEl.hidden = groupVisible === 0;
+        });
+        document.getElementById("visible-count").textContent = String(visible);
+        document.getElementById("empty-state").classList.toggle("visible", visible === 0);
+      };
+      filterButtons.forEach(button => button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach(item => item.classList.toggle("active", item === button));
+        applyFilters();
+      }));
+      search.addEventListener("input", applyFilters);
+      groupSelect.addEventListener("change", applyFilters);
+
+      const computerClaims = data.groups.find(group => group.id === "computer-api").claims;
+      document.getElementById("api-rows").innerHTML = computerClaims.map(claim => `<tr><td>${esc(claim.capability)}</td><td>${badge("artifact", claim.artifact_state)}</td><td>${badge("operational", claim.operational_state)}</td><td>${badge("evidence", claim.evidence_state)}</td><td>${esc(claim.next_gate)}</td></tr>`).join("");
+
+      document.getElementById("bridge-gate-name").textContent = data.bridge_readiness_gate.name;
+      document.getElementById("bridge-gate-note").textContent = data.bridge_readiness_gate.note;
+      document.getElementById("bridge-requirements").innerHTML = data.bridge_readiness_gate.requirements.map(item => `<li><span class="gate-box">${item.met ? "✓" : "×"}</span><span>${esc(item.label)}</span></li>`).join("");
+
+      document.getElementById("issues").innerHTML = data.known_register_issues.map(issue => `<article class="issue ${esc(issue.severity)}"><span>${esc(issue.severity)}</span><h3>${esc(issue.title)}</h3><p>${esc(issue.detail)}</p></article>`).join("");
+      document.getElementById("source-priority").innerHTML = data.source_priority.map(source => `<li><span>${esc(source)}</span></li>`).join("");
+
+      const drawer = document.getElementById("claim-drawer");
+      const backdrop = document.getElementById("drawer-backdrop");
+      const drawerBody = document.getElementById("drawer-body");
+      let returnFocus = null;
+      const closeDrawer = () => {
+        drawer.classList.remove("open");
+        backdrop.classList.remove("open");
+        drawer.setAttribute("aria-hidden", "true");
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (returnFocus) returnFocus.focus();
+      };
+      const openDrawer = (claim, trigger) => {
+        returnFocus = trigger;
+        const deps = claim.dependencies.length ? claim.dependencies.map(id => `<span title="${esc(claimById.get(id)?.capability || id)}">${esc(id)}</span>`).join("") : `<span>None</span>`;
+        const blockers = claim.blockers.length ? `<ul class="drawer-list">${claim.blockers.map(item => `<li>${esc(item)}</li>`).join("")}</ul>` : `<p>No named blocker.</p>`;
+        const evidence = claim.evidence.length ? claim.evidence.map(item => `<a class="evidence-link" href="${esc(item.href)}"><span>${esc(item.label)}</span><span>${esc(item.kind)}</span></a>`).join("") : `<p>No linked evidence.</p>`;
+        drawerBody.innerHTML = `<div class="section-kicker">${esc(claim.group_name)}</div><h2 id="drawer-title">${esc(claim.capability)}</h2><div class="drawer-owner">${esc(claim.owner)}</div><div style="margin-top:16px">${badges(claim)}</div><p>${esc(claim.summary)}</p><div class="drawer-block"><h3>Next gate</h3><p>${esc(claim.next_gate)}</p></div><div class="drawer-block"><h3>Blockers</h3>${blockers}</div><div class="drawer-block"><h3>Dependencies</h3><div class="dependency-list">${deps}</div></div><div class="drawer-block"><h3>Evidence</h3><div class="evidence-list">${evidence}</div></div><div class="drawer-block"><h3>Freshness</h3><p>${esc(claim.freshness)}</p></div>`;
+        drawer.classList.add("open");
+        backdrop.classList.add("open");
+        drawer.setAttribute("aria-hidden", "false");
+        backdrop.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        document.getElementById("drawer-close").focus();
+      };
+      document.addEventListener("click", event => {
+        const trigger = event.target.closest("[data-open-claim]");
+        if (trigger) openDrawer(claimById.get(trigger.dataset.openClaim), trigger);
+      });
+      document.getElementById("drawer-close").addEventListener("click", closeDrawer);
+      backdrop.addEventListener("click", closeDrawer);
+      document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) closeDrawer(); });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1783 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shipwright Ship Manual</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0e12;
+      --surface: #11161d;
+      --surface-2: #171d26;
+      --surface-3: #1d2530;
+      --line: #2b3542;
+      --line-strong: #445164;
+      --text: #e8edf3;
+      --muted: #9ba8b8;
+      --faint: #6f7b8a;
+      --blue: #67a7ff;
+      --cyan: #69d1d0;
+      --green: #65d58a;
+      --amber: #eabf62;
+      --red: #f07b78;
+      --violet: #b7a0f5;
+      --focus: #dbe9ff;
+      --max: 1680px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--bg); }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: 0;
+    }
+
+    button, input { font: inherit; letter-spacing: 0; }
+    button { color: inherit; }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    a:hover { color: #9ac6ff; }
+
+    .shell {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      min-height: 100vh;
+      background: var(--surface);
+    }
+
+    .masthead {
+      position: relative;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line-strong);
+      padding: 56px 52px 48px;
+      background: #05080d;
+      isolation: isolate;
+    }
+
+    .masthead-art {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .masthead > :not(.masthead-art) { position: relative; z-index: 3; }
+    .masthead-art img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
+
+    .masthead-links { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .masthead-links a { padding: 7px 10px; border: 1px solid rgba(155, 178, 214, 0.3); border-radius: 4px; background: rgba(4, 9, 17, 0.72); color: #d8e5fb; font-size: 11px; text-decoration: none; }
+    .masthead-links a:hover { border-color: var(--blue); color: #fff; }
+
+    .masthead::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(3, 6, 11, 0.98) 0%, rgba(3, 6, 11, 0.9) 28%, rgba(3, 6, 11, 0.25) 64%, rgba(3, 6, 11, 0.12) 100%), linear-gradient(0deg, rgba(3, 6, 11, 0.95), transparent 58%);
+    }
+
+    .masthead::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      opacity: 0.22;
+      background-image: linear-gradient(rgba(103, 167, 255, 0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(103, 167, 255, 0.07) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(90deg, #000, transparent 66%);
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .heading-row {
+      display: grid;
+      grid-template-columns: minmax(0, 760px) auto;
+      gap: 24px;
+      align-items: end;
+      margin-top: 9px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 10ch;
+      font-size: 64px;
+      line-height: 1.02;
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 9px 0 0;
+      max-width: 630px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .stamp {
+      color: var(--muted);
+      text-align: right;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .control-deck {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(15, 20, 26, 0.98);
+      border-bottom: 1px solid var(--line-strong);
+      padding: 12px 32px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding-bottom: 12px;
+    }
+
+    .search-wrap { position: relative; }
+
+    .search-wrap::before {
+      content: "⌕";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-52%);
+      color: var(--muted);
+      font-size: 20px;
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line-strong);
+      border-radius: 5px;
+      background: var(--bg);
+      color: var(--text);
+      padding: 0 12px 0 39px;
+      outline: none;
+    }
+
+    #search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(103, 167, 255, 0.18);
+    }
+
+    .status-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .filter-button, .tab-button {
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--surface-2);
+      cursor: pointer;
+      min-height: 34px;
+    }
+
+    .filter-button {
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .filter-button:hover, .tab-button:hover { border-color: var(--line-strong); color: var(--text); }
+    .filter-button.active { color: var(--text); border-color: var(--blue); background: #152238; }
+
+    .tabs {
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .tab-button {
+      padding: 9px 14px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom-color: transparent;
+    }
+
+    .tab-button.active {
+      color: var(--focus);
+      background: var(--surface);
+      border-color: var(--line-strong);
+      border-bottom-color: var(--surface);
+      margin-bottom: -1px;
+    }
+
+    main { min-height: 70vh; }
+    .view[hidden] { display: none; }
+
+    .band {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .band.alt { background: var(--surface-2); }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) minmax(240px, 520px);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 680;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+
+    .section-kicker {
+      margin: 0 0 4px;
+      color: var(--cyan);
+      font: 700 11px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    .section-note {
+      margin: 0;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .notice {
+      border-left: 3px solid var(--amber);
+      background: #1c1a14;
+      padding: 13px 16px;
+      color: #d9cfb5;
+      margin: 0 0 22px;
+    }
+
+    .notice strong { color: var(--amber); }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border: 1px solid var(--line);
+    }
+
+    .legend-item {
+      padding: 14px 15px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .legend-item:last-child { border-right: 0; }
+    .legend-item p { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+
+    .badge {
+      display: inline-block;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font: 700 10px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: nowrap;
+    }
+
+    .as-built { color: var(--green); background: rgba(101, 213, 138, 0.07); }
+    .configured { color: var(--blue); background: rgba(103, 167, 255, 0.07); }
+    .target { color: var(--amber); background: rgba(234, 191, 98, 0.07); }
+    .unverified { color: var(--red); background: rgba(240, 123, 120, 0.07); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      margin-top: 18px;
+    }
+
+    .metric {
+      padding: 17px;
+      background: #0f141a;
+      border-right: 1px solid var(--line);
+    }
+
+    .metric:last-child { border-right: 0; }
+    .metric-value { display: block; font-size: 25px; line-height: 1; font-weight: 700; color: var(--text); }
+    .metric-label { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; }
+
+    .org-map {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.72fr) minmax(260px, 1fr) minmax(360px, 1.7fr);
+      gap: 0;
+      border: 1px solid var(--line-strong);
+      background: var(--line);
+    }
+
+    .org-column {
+      background: var(--surface);
+      min-width: 0;
+    }
+
+    .org-column + .org-column { border-left: 1px solid var(--line-strong); }
+
+    .org-column-head {
+      padding: 9px 13px;
+      background: #0f141a;
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      font: 700 11px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    .org-node {
+      min-height: 86px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .org-node:last-child { border-bottom: 0; }
+    .org-node .role { color: var(--text); font-weight: 680; }
+    .org-node .rank { color: var(--cyan); margin-top: 2px; font-size: 12px; }
+    .org-node p { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+
+    .officer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .officer-mini {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .officer-mini:nth-child(odd) { border-right: 1px solid var(--line); }
+    .officer-mini strong { display: block; }
+    .officer-mini span { color: var(--muted); font-size: 12px; }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border: 1px solid var(--line);
+    }
+
+    .route {
+      min-height: 185px;
+      padding: 17px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .route:last-child { border-right: 0; }
+    .route .number { color: var(--faint); font: 700 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .route h3 { margin-top: 8px; }
+    .route .rank { margin-top: 4px; color: var(--cyan); font-size: 12px; }
+    .route p { color: var(--muted); margin: 12px 0 0; }
+    .route .boundary { color: var(--amber); font-size: 12px; }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .archive-card {
+      min-width: 0;
+      border: 1px solid var(--line-strong);
+      background: var(--surface);
+    }
+
+    .archive-card[open] { grid-column: 1 / -1; }
+
+    .archive-card summary {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 14px 16px;
+      color: var(--text);
+      list-style-position: inside;
+    }
+
+    .archive-card summary:hover { background: var(--surface-2); }
+    .archive-card summary strong { font-size: 15px; }
+    .archive-card summary span { color: var(--muted); font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    .archive-card iframe {
+      display: block;
+      width: 100%;
+      height: 680px;
+      border: 0;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .archive-grid-departments .archive-card[open] { grid-column: auto; }
+    .archive-grid-departments .archive-card iframe { height: 560px; }
+
+    .seat-list, .kit-list { border-top: 1px solid var(--line-strong); }
+
+    .seat, .kit-record {
+      border-bottom: 1px solid var(--line-strong);
+      background: var(--surface);
+    }
+
+    .seat:nth-child(even), .kit-record:nth-child(even) { background: #131922; }
+
+    .record-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: start;
+      padding: 18px 0 14px;
+    }
+
+    .seat-name { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .seat-id { color: var(--faint); font: 12px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .rank-line { margin-top: 4px; color: var(--cyan); font-size: 12px; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+    }
+
+    .datum {
+      padding: 13px 14px 15px 0;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .datum:nth-child(4n) { border-right: 0; padding-left: 14px; }
+    .datum:nth-child(4n + 2), .datum:nth-child(4n + 3) { padding-left: 14px; }
+    .datum:nth-child(n + 5) { border-top: 1px solid var(--line); }
+
+    .label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--faint);
+      font: 700 10px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    .value { color: #cbd4df; overflow-wrap: anywhere; }
+    .value strong { color: var(--text); }
+    code {
+      color: #b9d7ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+      overflow-wrap: anywhere;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line-strong);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 880px;
+      background: var(--surface);
+    }
+
+    th, td {
+      padding: 11px 13px;
+      text-align: left;
+      vertical-align: top;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    th:last-child, td:last-child { border-right: 0; }
+    tbody tr:last-child td { border-bottom: 0; }
+    th {
+      position: sticky;
+      top: 0;
+      background: #0e1319;
+      color: var(--muted);
+      font: 700 10px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    td { color: #c7d0dc; }
+    td strong { color: var(--text); }
+    tbody tr:hover td { background: #171f29; }
+
+    .tool-groups {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border: 1px solid var(--line);
+    }
+
+    .tool-group {
+      padding: 16px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      min-height: 154px;
+    }
+
+    .tool-group:nth-child(3n) { border-right: 0; }
+    .tool-group:nth-last-child(-n + 3) { border-bottom: 0; }
+    .tool-group p { margin: 9px 0 0; color: var(--muted); font-size: 12px; }
+    .tool-line { margin-top: 10px; line-height: 1.75; }
+    .tool-line code { margin-right: 7px; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      border: 1px solid var(--line);
+    }
+
+    .split > div { padding: 18px; }
+    .split > div + div { border-left: 1px solid var(--line); }
+    .split p, .split li { color: var(--muted); }
+    .split ul { margin: 10px 0 0; padding-left: 18px; }
+    .split li + li { margin-top: 6px; }
+
+    .timeline { border-left: 2px solid var(--line-strong); margin-left: 7px; }
+
+    .timeline-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 92px 150px minmax(0, 1fr);
+      gap: 16px;
+      padding: 10px 0 15px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-row::before {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 16px;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--surface-2);
+      background: var(--faint);
+      border-radius: 50%;
+    }
+
+    .timeline-row[data-status~="AS-BUILT"]::before { background: var(--green); }
+    .timeline-row .slice { font-weight: 680; }
+    .timeline-row p { margin: 0; color: var(--muted); }
+
+    .empty {
+      display: none;
+      padding: 28px 0;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .hidden-by-filter { display: none !important; }
+    .no-results .empty { display: block; }
+
+    footer {
+      padding: 20px 32px 28px;
+      color: var(--muted);
+      background: #0f141a;
+      border-top: 1px solid var(--line-strong);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .org-map { grid-template-columns: 1fr 1fr; }
+      .org-column:last-child { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line-strong); }
+      .seat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .datum:nth-child(4n) { padding-left: 14px; border-right: 1px solid var(--line); }
+      .datum:nth-child(2n) { border-right: 0; padding-left: 14px; }
+      .datum:nth-child(n + 3) { border-top: 1px solid var(--line); }
+      .tool-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tool-group:nth-child(3n) { border-right: 1px solid var(--line); }
+      .tool-group:nth-child(2n) { border-right: 0; }
+      .tool-group:nth-last-child(-n + 3) { border-bottom: 1px solid var(--line); }
+      .tool-group:nth-last-child(-n + 2) { border-bottom: 0; }
+    }
+
+    @media (max-width: 760px) {
+      .masthead, .band { padding-left: 18px; padding-right: 18px; }
+      .masthead { min-height: 820px; padding-bottom: 34px; }
+      .masthead-art img { object-position: 76% 20%; }
+      .masthead::before { background: linear-gradient(0deg, #05080d 0%, rgba(5,8,13,0.98) 38%, rgba(5,8,13,0.18) 72%, rgba(5,8,13,0.35) 100%); }
+      .control-deck { padding-left: 18px; padding-right: 18px; }
+      .heading-row, .section-head, .control-row { grid-template-columns: 1fr; }
+      .stamp, .section-note { text-align: left; }
+      h1 { max-width: 11ch; font-size: 46px; }
+      .status-controls { justify-content: flex-start; }
+      .legend, .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .legend-item:nth-child(2), .metric:nth-child(2) { border-right: 0; }
+      .legend-item:nth-child(-n + 2), .metric:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+      .org-map, .route-grid, .split, .archive-grid { grid-template-columns: 1fr; }
+      .archive-card[open], .archive-grid-departments .archive-card[open] { grid-column: auto; }
+      .org-column + .org-column, .split > div + div { border-left: 0; border-top: 1px solid var(--line-strong); }
+      .org-column:last-child { grid-column: auto; }
+      .route { border-right: 0; border-bottom: 1px solid var(--line); min-height: 0; }
+      .route:last-child { border-bottom: 0; }
+      .record-head { grid-template-columns: 1fr; }
+      .badges { justify-content: flex-start; }
+      .seat-grid { grid-template-columns: 1fr; }
+      .datum, .datum:nth-child(4n), .datum:nth-child(2n), .datum:nth-child(4n + 2), .datum:nth-child(4n + 3) {
+        padding: 12px 0;
+        border-right: 0;
+        border-top: 1px solid var(--line);
+      }
+      .tool-groups { grid-template-columns: 1fr; }
+      .tool-group, .tool-group:nth-child(2n), .tool-group:nth-child(3n), .tool-group:nth-last-child(-n + 2) {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .tool-group:last-child { border-bottom: 0; }
+      .timeline-row { grid-template-columns: 70px minmax(0, 1fr); }
+      .timeline-row p { grid-column: 2; }
+      footer { padding-left: 18px; padding-right: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      .masthead { min-height: 760px; }
+      .masthead-art img { object-position: 80% 14%; }
+      .masthead-links { justify-content: flex-start; flex-wrap: wrap; }
+      h1 { font-size: 40px; }
+      .legend, .metrics, .officer-grid { grid-template-columns: 1fr; }
+      .legend-item, .metric, .officer-mini:nth-child(odd) { border-right: 0; }
+      .legend-item:not(:last-child), .metric:not(:last-child), .officer-mini { border-bottom: 1px solid var(--line); }
+      .control-deck { position: static; }
+      .timeline-row { grid-template-columns: 1fr; padding-left: 20px; }
+      .timeline-row p { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="masthead">
+      <picture class="masthead-art" aria-hidden="true">
+        <source media="(max-width: 760px)" srcset="assets/ship-manual-falcon-guardian.webp" type="image/webp">
+        <img src="assets/ship-manual-falcon-guardian.webp" alt="" width="1915" height="821" fetchpriority="high">
+      </picture>
+      <div class="eyebrow">Shipwright / The Way of the Falcon</div>
+      <div class="heading-row">
+        <div>
+          <h1>The Shipwright Manual</h1>
+          <p class="subtitle">The governed record of command, staff, memory, tools, workspaces, and the factory beyond the hull. Status stays attached to evidence, and every route returns to command.</p>
+        </div>
+        <div>
+          <div class="stamp">FALCON MANUAL / REV 2026-07-11<br>LOCAL / NO EXTERNAL DEPS</div>
+          <div class="masthead-links">
+            <a href="ship-building.html">Building</a>
+            <a href="../shipbook/shipbook-captain.md">Captain Manual</a>
+            <a href="../shipbook/README.md">Department Manuals</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="control-deck" aria-label="Manual controls">
+      <div class="control-row">
+        <label class="search-wrap">
+          <span class="label" style="position:absolute;left:-9999px">Search manual</span>
+          <input id="search" type="search" placeholder="Search active register..." autocomplete="off">
+        </label>
+        <div class="status-controls" aria-label="Filter by readiness">
+          <button class="filter-button active" type="button" data-filter="ALL">ALL</button>
+          <button class="filter-button" type="button" data-filter="AS-BUILT">AS-BUILT</button>
+          <button class="filter-button" type="button" data-filter="CONFIGURED">CONFIGURED</button>
+          <button class="filter-button" type="button" data-filter="TARGET">TARGET</button>
+          <button class="filter-button" type="button" data-filter="UNVERIFIED">UNVERIFIED</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Manual views">
+        <button class="tab-button active" type="button" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="seats">Command Seats</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="kit">Personal Staff Kit</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="factory">Engineering &amp; Factory</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="controls">Access &amp; Readiness</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="manuals">Manual Library</button>
+      </div>
+    </nav>
+
+    <main>
+      <section class="view" data-view="overview">
+        <div class="band">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">How to read this</p>
+              <h2>Status is attached to claims, not people</h2>
+            </div>
+            <p class="section-note">A seat may be as-built in a legacy runtime, configured as an endpoint, and still have a target locked harness.</p>
+          </div>
+          <div class="notice"><strong>Operational rule:</strong> describing a capability does not make it live. Queue receipt is not execution; a configured model is not a staffed seat; a target control is not enforcement.</div>
+          <div class="legend">
+            <div class="legend-item"><span class="badge as-built">AS-BUILT</span><p>Concrete code or durable artifact inspected in the repository.</p></div>
+            <div class="legend-item"><span class="badge configured">CONFIGURED</span><p>Named route, seat, model, or store without proven live behavior.</p></div>
+            <div class="legend-item"><span class="badge target">TARGET</span><p>Directed architecture still requiring implementation and proof.</p></div>
+            <div class="legend-item"><span class="badge unverified">UNVERIFIED</span><p>Evidence is absent, contradictory, stale, or not end-to-end.</p></div>
+          </div>
+          <div class="metrics" aria-label="Ship map counts">
+            <div class="metric"><span class="metric-value">12</span><span class="metric-label">Flag + command/officer seats mapped</span></div>
+            <div class="metric"><span class="metric-value">3</span><span class="metric-label">Personal departments per Captain/officer</span></div>
+            <div class="metric"><span class="metric-value">10</span><span class="metric-label">Configured local factory managers</span></div>
+            <div class="metric"><span class="metric-value">7</span><span class="metric-label">Configured local worker types</span></div>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Authority map</p>
+              <h2>One command chain, distinct support cells</h2>
+            </div>
+            <p class="section-note">Rank, model, tool access, memory, and authority are independent fields.</p>
+          </div>
+          <div class="org-map">
+            <div class="org-column">
+              <div class="org-column-head">Flag command</div>
+              <div class="org-node"><div class="role">Commodore</div><div class="rank">Human flag authority</div><p>Sets priorities, standing missions, grants, and above-Captain calls.</p></div>
+              <div class="org-node"><div class="role">Captain</div><div class="rank">Ship command</div><p>Commands Shipwright under the Commodore; decides, decomposes, orders, integrates, and informs.</p></div>
+            </div>
+            <div class="org-column">
+              <div class="org-column-head">Routing command</div>
+              <div class="org-node"><div class="role">No1 / First Officer</div><div class="rank">Commander</div><p>Runs every ship department and owns the main ship board under the Captain.</p></div>
+              <div class="org-node"><div class="role">Chief Engineer boundary</div><div class="rank">Lieutenant Commander</div><p>Ship-side officer who speaks to the separate Incubator PM through a logged interface.</p></div>
+            </div>
+            <div class="org-column">
+              <div class="org-column-head">Commissioned departments</div>
+              <div class="officer-grid">
+                <div class="officer-mini"><strong>Science / No2</strong><span>Hours-to-days evidence work</span></div>
+                <div class="officer-mini"><strong>Intelligence</strong><span>Reconnaissance and source pipeline</span></div>
+                <div class="officer-mini"><strong>Security</strong><span>Privilege, custody, provenance, quarantine</span></div>
+                <div class="officer-mini"><strong>Operations</strong><span>Funds, keys, servers, budgets, cadence</span></div>
+                <div class="officer-mini"><strong>Communications</strong><span>Crafted external output and final review</span></div>
+                <div class="officer-mini"><strong>Tactical</strong><span>Earning options and mission tactics</span></div>
+                <div class="officer-mini"><strong>Counsellor / Doctor</strong><span>Mind-health intervention</span></div>
+                <div class="officer-mini"><strong>CMO</strong><span>Whole-surface detection and learning</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Repeated cell</p>
+              <h2>Every Captain/officer receives three private departments</h2>
+            </div>
+            <p class="section-note">The cell serves its owning officer. It does not create a second command tree.</p>
+          </div>
+          <div class="route-grid">
+            <div class="route"><div class="number">01 / COGNITION</div><h3>Personal Advisor</h3><div class="rank">Warrant Officer, non-line</div><p>Direct thought partner with private scratchpad, advisory board, separate PA/Brain, and a configured team of Ensign-rank Scientists.</p><p class="boundary">No orders, operations, deployment, spend, or ship command.</p></div>
+            <div class="route"><div class="number">02 / PERSONAL OPS</div><h3>Personal Assistant</h3><div class="rank">Chief Petty Officer</div><p>Runs the officer-scoped human-brain, records, commitments, people/projects, scheduling, packets, ledger, and administration.</p><p class="boundary">The officer decides and speaks. Memory is data, not authority.</p></div>
+            <div class="route"><div class="number">03 / PERSONAL BUILD</div><h3>Personal Engineer</h3><div class="rank">Lieutenant</div><p>Opus 4.8 Claude Code manager with an officer workspace, board, queue, full technical web, and fresh Codex Ensign workers.</p><p class="boundary">Personal tooling only. Broad work routes through Chief Engineer.</p></div>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Routing test</p>
+              <h2>Choose the route by work shape</h2>
+            </div>
+            <p class="section-note">The owning officer remains responsible for the decision and acceptance.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Need</th><th>Route</th><th>Interaction</th><th>Expected output</th><th>Hard boundary</th></tr></thead>
+              <tbody>
+                <tr><td>Think through an immediate question</td><td><strong>Personal Advisor</strong></td><td>Target synchronous/resumable dialogue</td><td>Cognitive contribution</td><td>Advisor never decides or gates</td></tr>
+                <tr><td>Parallel bounded thought/source checks</td><td><strong>Advisor Scientists</strong></td><td>Minutes to bounded turns</td><td>Findings to Advisor</td><td>No command or operations</td></tr>
+                <tr><td>Broad organized problem</td><td><strong>Science Officer</strong></td><td>Asynchronous commission; hours or days</td><td>Provenance-backed evidence report</td><td>Report informs; Captain decides</td></tr>
+                <tr><td>Recall, records, schedule, research</td><td><strong>Officer PA</strong></td><td>Typed assignment to personal ops</td><td>Packet, ledger, brain/admin result</td><td>PA transcribes, does not judge</td></tr>
+                <tr><td>Officer-specific tool</td><td><strong>Personal Engineer</strong></td><td>Manager loop with isolated workers</td><td>Reviewed candidate + tests</td><td>No default-working-copy write</td></tr>
+                <tr><td>Shared ship/factory engineering</td><td><strong>Chief Engineer</strong></td><td>Logged interface to Incubator PM</td><td>Factory result and evidence</td><td>Chief Engineer is not the PM</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="seats" hidden>
+        <div class="band">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Command register</p>
+              <h2>Current machinery and target destination</h2>
+            </div>
+            <p class="section-note">Search and status filters apply to every record below.</p>
+          </div>
+          <div id="seat-list" class="seat-list"></div>
+          <div class="empty">No command seats match this search and status filter.</div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Captain cockpit</p><h2>Exact experimental 20-tool surface</h2></div>
+            <p class="section-note">Strict MCP, replacement prompt, no built-in files, shell, browser, agents, skills, or plugins.</p>
+          </div>
+          <div class="tool-groups">
+            <div class="tool-group"><h3>Working state</h3><div class="tool-line"><code>scratchpad.read</code><code>scratchpad.write</code><code>current.read</code><code>current.write</code></div><p>Private notebook and one fixed current handoff only; neither accepts an arbitrary path.</p></div>
+            <div class="tool-group"><h3>Personal board</h3><div class="tool-line"><code>board.list</code><code>board.next</code><code>board.get</code><code>board.add</code><code>board.update</code><code>board.depend</code></div><p>Only the Captain's SQLite board. It tracks work but dispatches nothing.</p></div>
+            <div class="tool-group"><h3>Captain Brain</h3><div class="tool-line"><code>memory.focus</code><code>memory.search</code><code>memory.get</code><code>memory.remember</code></div><p>Governed Brain interface. A memory node cannot mint a command, grant, or seal.</p></div>
+            <div class="tool-group"><h3>Ship knowledge</h3><div class="tool-line"><code>ship.knowledge</code><code>staff.roster</code></div><p>Allowlisted canonical documents and declared endpoint status. The Captain Shipbook is exposed as a verified index plus enum-bounded whole sections, never general file search.</p></div>
+            <div class="tool-group"><h3>Staff routing</h3><div class="tool-line"><code>pa.assign</code><code>advisor.consult</code><code>officer.order</code><code>staff.report</code></div><p>Queues envelopes or reads latest packets. Current delivery returns <code>executed: false</code>.</p></div>
+            <div class="tool-group"><h3>Model variants</h3><div class="tool-line"><code>Fable 5 / medium</code><code>Opus 4.8 / high</code><code>Sonnet 5 / high</code></div><p>Runnable candidates. Fable has Opus fallback in config. No final Captain model verdict is implied.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="kit" hidden>
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Officer cell</p><h2>Personal staff contracts</h2></div>
+            <p class="section-note">One instance per Captain/officer. No shared Brain writes and no cross-officer private-team assignment.</p>
+          </div>
+          <div id="kit-list" class="kit-list"></div>
+          <div class="empty">No personal-kit records match this search and status filter.</div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Advisor precursor</p><h2>Meridian today versus the target cell</h2></div>
+            <p class="section-note">Meridian is the Captain's personal thought partner. He is not Science, a line officer, or a gate.</p>
+          </div>
+          <div class="split">
+            <div>
+              <h3><span class="badge as-built">AS-BUILT</span> Current Meridian</h3>
+              <ul>
+                <li>Fable 5, medium effort, locked custom bridge cell.</li>
+                <li>Exactly five tools: <code>packet.read</code>, <code>pa.ask</code>, <code>pa.tell</code>, <code>seat.message</code>, <code>escalate</code>.</li>
+                <li>No raw files, code, board, notes, shell, web, or subagents.</li>
+                <li>Separate Sonnet 5 Advisor PA in <code>bridge-advisor-pa</code>.</li>
+                <li>Separate <code>brain-advisor.captain</code> namespace and append-only records.</li>
+                <li>First sealed deliberation exists.</li>
+              </ul>
+            </div>
+            <div>
+              <h3><span class="badge target">TARGET</span> Complete Advisor cell</h3>
+              <ul>
+                <li>Synchronous, resumable officer-to-Advisor conversation.</li>
+                <li>Private Advisor scratchpad and personal advisory board.</li>
+                <li>Typed roster/assign/message/report control of configured Scientists.</li>
+                <li>Per-ship premium model slot and explicit grant/cost stamps.</li>
+                <li>Complete event-chain projection into bridge observability.</li>
+                <li>Still no orders, ship command, operations, deployment, or release authority.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Brain boundary</p><h2>One PA, one officer-scoped human brain</h2></div>
+            <p class="section-note">Based on <code>~/Projects/falcon-ai/falcon-brain</code>. The Advisor's PA maintains a different Advisor Brain.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Data class</th><th>Writer</th><th>Store</th><th>Required control</th><th>Not allowed</th></tr></thead>
+              <tbody>
+                <tr><td>Officer belief / durable conclusion</td><td>Owning PA after officer ratification</td><td>Officer human-brain</td><td>Exact staged delta and ratification evidence</td><td>PA inference or cross-officer write</td></tr>
+                <tr><td>Advisor cognition / lesson</td><td>Advisor PA</td><td>Separate Advisor Brain</td><td>Advisor namespace and provenance</td><td>Writing the officer's Brain</td></tr>
+                <tr><td>Event / action / commitment</td><td>Owning PA</td><td>Append-only ledger and packet</td><td>Timestamp, source, correlation, cost/model stamp</td><td>Recasting event as belief</td></tr>
+                <tr><td>Live objective / status</td><td>Authorized board writer; PA transcribes</td><td>Officer/department board</td><td>Authenticated dictation and domain scope</td><td>Using memory as board truth</td></tr>
+                <tr><td>Standing order / grant / seal</td><td>Formal authority process</td><td>Canonical tracked record</td><td>Authenticated source and sealing</td><td>Minting authority from a Brain node</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="factory" hidden>
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Engineering topology</p><h2>Three scales, three owners</h2></div>
+            <p class="section-note">The Chief Engineer is a ship officer. The Incubator PM remains the external factory orchestrator.</p>
+          </div>
+          <div class="route-grid">
+            <div class="route"><div class="number">PERSONAL</div><h3>Officer Personal Engineer</h3><div class="rank">Lieutenant / Opus 4.8 Claude Code</div><p>Builds bounded personal tooling through fresh Codex Ensigns in isolated jj workspaces.</p><p class="boundary">No shared ship work and no direct landing.</p></div>
+            <div class="route"><div class="number">SHIP-SIDE</div><h3>Chief Engineer</h3><div class="rank">Lieutenant Commander / locked officer target</div><p>Owns requirements, acceptance, and the logged relationship with the external factory PM.</p><p class="boundary">Does not replace or impersonate the PM.</p></div>
+            <div class="route"><div class="number">EXTERNAL FACTORY</div><h3>Incubator PM</h3><div class="rank">Lieutenant Commander / default Claude Code</div><p>Runs the complete Incubator factory and remains its direct human-facing orchestrator.</p><p class="boundary">Never receives the Bridge officer harness.</p></div>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Local floor</p><h2>Configured Shipwright managers</h2></div>
+            <p class="section-note">Legacy Incubator-derived execution machinery; not the final bridge hierarchy.</p>
+          </div>
+          <div class="table-wrap">
+            <table id="manager-table">
+              <thead><tr><th>Manager</th><th>Model/runtime</th><th>Job</th><th>Worker route</th><th>Architecture note</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Execution crew</p><h2>Configured local workers</h2></div>
+            <p class="section-note">Workers execute bounded assignments. Persistence and capability do not confer rank.</p>
+          </div>
+          <div class="table-wrap">
+            <table id="worker-table">
+              <thead><tr><th>Worker</th><th>Model/runtime</th><th>Workspace/access</th><th>Job</th><th>Boundary</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">External factory</p><h2>Incubator PM's ten departments</h2></div>
+            <p class="section-note"><code>~/Projects/Incubator</code> is a separate project and control domain.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Department manager</th><th>Factory responsibility</th><th>Shipwright route</th></tr></thead>
+              <tbody>
+                <tr><td>Development</td><td>Decompose and build code through workers</td><td rowspan="10"><strong>Chief Engineer -> logged typed interface -> Incubator PM</strong><br><br>No Shipwright officer talks around the PM into factory managers.</td></tr>
+                <tr><td>Frontend</td><td>Implement and visually judge UI work</td></tr>
+                <tr><td>Design</td><td>Check feasibility and integration assumptions</td></tr>
+                <tr><td>Product</td><td>Shape product requirements and scope</td></tr>
+                <tr><td>Bug</td><td>Intake, reproduce, root-cause, author fix designs</td></tr>
+                <tr><td>Quality control</td><td>Devise and adjudicate test campaigns</td></tr>
+                <tr><td>Panel</td><td>Run multi-model review and convergence map</td></tr>
+                <tr><td>Documentation</td><td>Own documentation work</td></tr>
+                <tr><td>DevOps</td><td>Infrastructure and deployment operations</td></tr>
+                <tr><td>Graphics</td><td>Govern generative media and credit use</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="controls" hidden>
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Write boundary</p><h2>Isolated workspaces and one landing broker</h2></div>
+            <p class="section-note">This is a target invariant. The broker identity and enforcement are not yet implemented.</p>
+          </div>
+          <div class="notice"><strong>TARGET / UNVERIFIED:</strong> no AI writes the default/main working copy. Every AI writer uses an isolated jj workspace. Only a single landing broker may land a reviewed candidate after provenance, test, and conflict checks.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Actor</th><th>Filesystem posture</th><th>Web</th><th>Board/state</th><th>Landing</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Captain / locked officer</strong></td><td>No raw filesystem</td><td>No direct browser</td><td>Typed packet/PA/order surface</td><td>Never</td></tr>
+                <tr><td><strong>Advisor / Scientist</strong></td><td>Bounded private state only</td><td>Scientist gets bounded search/fetch</td><td>Advisor board; assignment scratchpads</td><td>Never</td></tr>
+                <tr><td><strong>Officer PA</strong></td><td>One scoped officer workspace and Brain interfaces</td><td>Through research specialists</td><td>Ledger, packet, dictated board, human-brain</td><td>Submits request only</td></tr>
+                <tr><td><strong>Personal Engineer</strong></td><td>Full tools in officer engineering workspace</td><td>Full technical web</td><td>Own board, queue, records</td><td>Submits candidate only</td></tr>
+                <tr><td><strong>Codex Ensign</strong></td><td>One fresh isolated jj workspace</td><td>Only when dispatch grants network</td><td>Bounded kickoff and result</td><td>Never</td></tr>
+                <tr><td><strong>Local manager</strong></td><td>Legacy manager-run posture</td><td>Runtime-specific</td><td>Manager registries/boards/logs</td><td>Legacy varies; target broker replaces</td></tr>
+                <tr><td><strong>Landing broker</strong></td><td>Target isolated custody surface</td><td>Not required</td><td>Landing queue and audit record</td><td>Only authorized landing actor</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Resource plane</p><h2>Web, credentials, and spend</h2></div>
+            <p class="section-note">No ambient credentials. Absence of a per-seat spend object means no injected metered lane.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Actor</th><th>Web posture</th><th>Credential posture</th><th>Spend posture</th><th>Observed state</th></tr></thead>
+              <tbody>
+                <tr><td>Captain / officer</td><td>No direct browser in target cockpit</td><td>No ambient keys</td><td>$0 unless typed order carries named grant</td><td><span class="badge target">TARGET</span></td></tr>
+                <tr><td>Advisor</td><td>No raw web; delegates source work</td><td>None</td><td>Paid model/team turns grant-gated</td><td><span class="badge target">TARGET</span></td></tr>
+                <tr><td>Scientist</td><td>Bounded search/fetch with source capture</td><td>Brokered source access</td><td>Grant + model/cost stamp per paid run</td><td><span class="badge target">TARGET</span></td></tr>
+                <tr><td>PA office</td><td>Scoped research specialists</td><td>Named administrative capabilities only</td><td>Named grant for metered lane</td><td><span class="badge target">TARGET</span></td></tr>
+                <tr><td>Personal Engineer</td><td>Full technical web in own workspace</td><td>Explicit build-scoped grants</td><td>Officer-scoped named grant</td><td><span class="badge target">TARGET</span></td></tr>
+                <tr><td>Ops</td><td>Resource administration</td><td>External, revocable custody</td><td>Owns registry/allocation; human gate for custody-class movement</td><td><span class="badge configured">CONFIGURED</span></td></tr>
+                <tr><td>OpenRouter duty bench</td><td>CLI/API lane</td><td>External custody</td><td>G-0001, $50/month</td><td><span class="badge as-built">AS-BUILT</span></td></tr>
+                <tr><td>OpenRouter ship-core</td><td>API lane</td><td>External custody; dormant injection</td><td>G-0004, $300/month</td><td><span class="badge configured">CONFIGURED</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Event chain</p><h2>Minimum provenance by action class</h2></div>
+            <p class="section-note">A reconstructable record must not depend on the actor's later recollection.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Event</th><th>Minimum evidence</th><th>Current source</th><th>Gap</th></tr></thead>
+              <tbody>
+                <tr><td>Order</td><td>Issuer, target, envelope/epoch, objective, constraints, acceptance, evidence, grant, timestamp</td><td>Captain queue envelopes</td><td>Wake/resume and lifecycle completion</td></tr>
+                <tr><td>Model turn</td><td>Seat, model ID, effort, commission hash, session/correlation, start/end, result</td><td>Captain runtime + manager logs</td><td>Unified projection</td></tr>
+                <tr><td>Tool call</td><td>Tool, bounded args/hash, result, error, correlation, prior hash</td><td>Captain provenance module</td><td>Every target seat/tool family</td></tr>
+                <tr><td>Research</td><td>Query, source ID/URL, fetch time, retained evidence/hash, finding uncertainty</td><td>Partial panel/research artifacts</td><td>Scientist source ledger</td></tr>
+                <tr><td>Code work</td><td>Workspace, worker, base, files, tests, review loop, candidate ID</td><td>Local manager/worker logs</td><td>Officer namespaces + landing broker</td></tr>
+                <tr><td>Brain write</td><td>Namespace, proposer, exact delta/hash, ratification, writer, resulting version</td><td>Brain CLI and Advisor PA evidence</td><td>All officer human-brain instances</td></tr>
+                <tr><td>Spend</td><td>Grant, lane, provider, model/tool, units, amount or unknown, custodian</td><td>Spend registry and selected ledgers</td><td>Complete Max/provider metering</td></tr>
+                <tr><td>Landing</td><td>Candidate, reviewer, tests, conflicts, broker, landed change/seal</td><td>Legacy jj workflows</td><td>Single broker contract and custody</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Observable nervous system</p><h2>Ship Computer</h2></div>
+            <p class="section-note"><span class="badge target">TARGET / NOT BUILT</span> Design only. No runtime, event store, API, or live feed is claimed.</p>
+          </div>
+          <div class="notice"><strong>Role:</strong> watch all activity the ship can actually observe, persist it in external append-only state, correlate and redact it, then expose a Bridge API, live feed, history, and operational map. It may transport an authenticated command that already has authority; it never originates, expands, or approves one, writes Brains, moves funds, or lands code.</div>
+          <div class="route-grid">
+            <div class="route"><div class="number">01 / PRODUCERS</div><h3>Observable activity</h3><div class="rank">Events, not private cognition</div><p>Model-turn metadata, typed tool calls, orders, queues, reports, boards, workers, workspaces, tests, grants, costs, Brain-write events, landings, and heartbeats.</p><p class="boundary">Provider-hidden reasoning is not observable.</p></div>
+            <div class="route"><div class="number">02 / EXTERNAL STATE</div><h3>Append-only event plane</h3><div class="rank">Outside the actor being audited</div><p>Normalize, correlate, integrity-check, and retain source pointers. Redact tokens, secrets, private content, and sensitive data before persistence/projection.</p><p class="boundary">An actor cannot rewrite its own audit record.</p></div>
+            <div class="route"><div class="number">03 / BRIDGE</div><h3>API, live feed, and history</h3><div class="rank">Commodore + bounded ship views</div><p>Show freshness, source, gaps, unknown cost, envelope correlation, staff activity, workspace/test state, and landing evidence without manufacturing certainty.</p><p class="boundary">A clean feed does not prove alignment or safety.</p></div>
+          </div>
+          <div class="split" style="margin-top:18px">
+            <div>
+              <h3>Target visibility</h3>
+              <ul>
+                <li>Every seat/session: model, effort, commission hash, health, heartbeat, current envelope.</li>
+                <li>Every order: authenticated issuer, lifecycle, amendment, acceptance, report correlation.</li>
+                <li>Every staff cell: Advisor, PA, Scientist, Engineer queues, wake state, and bounded result.</li>
+                <li>Every build: manager/worker/workspace tree, files, tests, review, candidate, landing.</li>
+                <li>Every resource/memory event: grant/cost/custody and Brain delta/ratification/version.</li>
+                <li>Every state carries truth class: recorded, receipt, reported, derived, configured, or unknown.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Future build route</h3>
+              <ul>
+                <li>Architecture: <a href="../design/ship-computer-design.md">ship-computer-design.md</a>.</li>
+                <li>Frontend: <a href="../design/ship-computer-bridge-frontend-plan.md">ship-computer-bridge-frontend-plan.md</a>.</li>
+                <li>Manual identity: the Falcon guardian artwork is commissioned for this Manual, not for the operational Bridge.</li>
+                <li>Bridge restart gate: ratified contracts and RBAC, external canonical state, authenticated API/stream, one accepted end-to-end Captain voyage, and verified replay/recovery/redaction. Only then does from-scratch operational design begin.</li>
+                <li>Future naming: <b>Falcon Command</b> is reserved for a later fleet HQ that can view every ship Bridge, operate a distinct Command Computer, and communicate across all ships. It is not designed or built here.</li>
+                <li>After acceptance: Captain/No1 -> Chief Engineer -> logged Incubator PM commission.</li>
+                <li>Codex Frontend Manager owns product, interaction, and visual design under direct Commodore direction.</li>
+                <li>The accepted Codex design package becomes the implementation contract handed through the Chief Engineer to the Incubator PM.</li>
+                <li>Production implementation starts only after the Chief Engineer confirms implementation readiness under any required Commodore steer.</li>
+                <li>Incubator factory builds, reviews, and tests in isolated workspaces.</li>
+                <li>Reviewed candidate passes through the future single landing broker.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Authority-to-acceptance lineage</p><h2>Command Graph</h2></div>
+            <p class="section-note"><span class="badge target">TARGET / NOT BUILT</span> Current boards, queues, ledgers, and reports are partial ingredients, not an end-to-end graph runtime.</p>
+          </div>
+          <div class="notice"><strong>Required lineage:</strong> Commodore directive / standing authority -> Captain mission -> objective -> typed route/order -> epic -> task -> attempt -> evidence/report -> explicit acceptance decision.</div>
+          <div class="split">
+            <div>
+              <h3>No orphan work</h3>
+              <ul>
+                <li>Every executable node has one primary command parent, one root mission, and an authenticated authority source.</li>
+                <li>Secondary contributes-to links never replace primary lineage.</li>
+                <li>Every attempt links to its task, model, grant, and workspace; retries create new attempt IDs.</li>
+                <li>No orphan work is accepted, dispatched, landed, paid, or reported complete.</li>
+                <li>The graph observes lineage. It cannot mint authority or infer approval.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Queue state is not completion</h3>
+              <ul>
+                <li><code>queued</code> is not <code>delivered</code>.</li>
+                <li><code>delivered</code> is not <code>working</code>.</li>
+                <li><code>reported</code> is not <code>accepted</code>.</li>
+                <li>Complete requires a correlated report, acceptance evidence, and an explicit decision. Only Captain closes ship-level work.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="table-wrap" style="margin-top:18px">
+            <table>
+              <thead><tr><th>First-class view</th><th>Question answered</th><th>Minimum lineage</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Standing Order</strong></td><td>Which durable authority is active, superseded, revoked, or expired?</td><td>Authenticated source, version/epoch, scope, effective state, superseding record</td></tr>
+                <tr><td><strong>Mission</strong></td><td>What outcome is the Captain pursuing under that authority?</td><td>Authority, mission ID, objective tree, owner, priority, grants, current decision</td></tr>
+                <tr><td><strong>Epic</strong></td><td>Which multi-stage outcome groups related work?</td><td>Mission/objective parent, route owner, tasks, dependencies, acceptance, evidence roll-up</td></tr>
+                <tr><td><strong>Task</strong></td><td>What bounded result was assigned and what happened?</td><td>Parent, typed route/order, attempts, model/workspace/grant, report, acceptance decision</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-wrap" style="margin-top:18px">
+            <table>
+              <thead><tr><th>Typed route</th><th>Graph flow</th><th>Boundary</th></tr></thead>
+              <tbody>
+                <tr><td><code>command_order</code></td><td>Order -> officer/department tasks -> evidence report -> bounded acceptance -> Captain parent decision</td><td>Only authorized command lines</td></tr>
+                <tr><td><code>consult</code></td><td>Officer objective -> consult thread -> cognitive result</td><td>Never a commissioned order or approval gate</td></tr>
+                <tr><td><code>ops_request</code></td><td>Officer objective -> PA/admin assignment -> ledger/packet/brain/admin evidence -> officer acceptance</td><td>PA transcribes and operates; officer decides</td></tr>
+                <tr><td><code>engineering_brief</code></td><td>Objective -> engineer brief -> isolated tasks/attempts -> candidate/tests -> officer acceptance + broker result</td><td>Personal tooling only; no direct landing</td></tr>
+                <tr><td><code>science_commission</code></td><td>Captain objective -> hours/days commission -> panel/research tree -> evidence report -> Captain acceptance</td><td>Broad organized evidence work</td></tr>
+                <tr><td><code>factory_work_order</code></td><td>Ship objective -> CE translation -> PM commission -> factory tasks/attempts -> tested result -> Captain acceptance</td><td>PM remains external factory orchestrator</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Build order</p><h2>Readiness and dependencies</h2></div>
+            <p class="section-note">Command migrates last. Staff, controls, and observability must be real first.</p>
+          </div>
+          <div id="timeline" class="timeline"></div>
+          <div class="empty">No readiness slices match this search and status filter.</div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Hull-stress</p><h2>What remains unproven</h2></div>
+            <p class="section-note">These are active design and verification gaps, not rhetorical cautions.</p>
+          </div>
+          <div class="split">
+            <div>
+              <h3>Runtime gaps</h3>
+              <ul>
+                <li>Configured endpoints do not prove a seat wakes or returns a correlated report.</li>
+                <li>Persistent local manager health was not live-checked by this manual.</li>
+                <li>Meridian's current consult route queues but does not resume a conversation.</li>
+                <li>Per-turn Max/provider spend is incomplete where ledgers say unknown.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Architecture gaps</h3>
+              <ul>
+                <li>Repeatable Advisor/Scientist/PA/Engineer cells are not implemented.</li>
+                <li>One-PA/one-human-brain enforcement is a target contract.</li>
+                <li>Chief Engineer-to-Incubator PM typed interface is not proven end-to-end.</li>
+                <li>Single landing broker and unified observability projection remain unbuilt.</li>
+                <li>The CMO name still conflicts across canonical/configured sources.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="manuals" hidden>
+        <div class="band">
+          <div class="notice">
+            <strong>Complete inspection archive:</strong> this is the Commodore's single visual entry point.
+            The source manuals remain authoritative, but every whole-ship, Captain, officer, and build manual is
+            available below without leaving the Ship Manual. Open a volume to inspect its complete source in place.
+            If a manual is missing here, the Ship Manual is incomplete.
+          </div>
+          <div class="section-head">
+            <div><p class="section-kicker">Everything in one place</p><h2>Complete manual archive</h2></div>
+            <p class="section-note">Inline source inspection is deliberately plain: the text below is the actual file, not a summary or a copied excerpt.</p>
+          </div>
+          <div class="archive-grid">
+            <details class="archive-card" open>
+              <summary><strong>My Ship Manual</strong><span>docs/system/ship-manual.md · canonical whole-ship source</span></summary>
+              <iframe title="Canonical Ship Manual" src="../system/ship-manual.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Captain Harness Manual</strong><span>docs/system/captain-harness-manual.md · Captain cockpit inspection</span></summary>
+              <iframe title="Captain Harness Manual" src="../system/captain-harness-manual.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Captain's Shipbook</strong><span>docs/shipbook/shipbook-captain.md · generated whole volume</span></summary>
+              <iframe title="Captain's Shipbook" src="../shipbook/shipbook-captain.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Commodore's Shipbook</strong><span>docs/shipbook/shipbook-commodore.md · human inspection volume</span></summary>
+              <iframe title="Commodore's Shipbook" src="../shipbook/shipbook-commodore.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>How to Run the Ship</strong><span>docs/system/how-to-run-the-ship.md · operating handbook</span></summary>
+              <iframe title="How to Run the Ship" src="../system/how-to-run-the-ship.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Shipbook Charter</strong><span>docs/shipbook/README.md · manual system and ownership</span></summary>
+              <iframe title="Shipbook Charter" src="../shipbook/README.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Ship Build</strong><span>docs/viewers/ship-building.html · evidence-backed build register</span></summary>
+              <iframe title="Ship Build" src="ship-building.html" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Raw Build Register</strong><span>docs/system/ship-build-register.json · machine-readable build source</span></summary>
+              <iframe title="Raw Build Register" src="../system/ship-build-register.json" loading="lazy"></iframe>
+            </details>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Agent manuals</p><h2>Shared and department books</h2></div>
+            <p class="section-note">The shared operating standard and every commissioned department book are part of the complete Ship Manual, even when a seat is configured, target, or not yet runtime-enforced.</p>
+          </div>
+          <div class="archive-grid archive-grid-departments">
+            <details class="archive-card">
+              <summary><strong>Officer Operating Standard</strong><span>docs/shipbook/shared/officer-operating-standard.md</span></summary>
+              <iframe title="Officer Operating Standard" src="../shipbook/shared/officer-operating-standard.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>No1 Command Floor</strong><span>docs/shipbook/departments/no1-command-floor.md</span></summary>
+              <iframe title="No1 Command Floor Manual" src="../shipbook/departments/no1-command-floor.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Science</strong><span>docs/shipbook/departments/science.md</span></summary>
+              <iframe title="Science Manual" src="../shipbook/departments/science.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Intelligence</strong><span>docs/shipbook/departments/intelligence.md</span></summary>
+              <iframe title="Intelligence Manual" src="../shipbook/departments/intelligence.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Security</strong><span>docs/shipbook/departments/security.md</span></summary>
+              <iframe title="Security Manual" src="../shipbook/departments/security.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Operations</strong><span>docs/shipbook/departments/operations.md</span></summary>
+              <iframe title="Operations Manual" src="../shipbook/departments/operations.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Communications</strong><span>docs/shipbook/departments/communications.md</span></summary>
+              <iframe title="Communications Manual" src="../shipbook/departments/communications.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Tactical</strong><span>docs/shipbook/departments/tactical.md</span></summary>
+              <iframe title="Tactical Manual" src="../shipbook/departments/tactical.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Counsellor</strong><span>docs/shipbook/departments/counsellor.md</span></summary>
+              <iframe title="Counsellor Manual" src="../shipbook/departments/counsellor.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Monitoring</strong><span>docs/shipbook/departments/monitoring.md</span></summary>
+              <iframe title="Monitoring Manual" src="../shipbook/departments/monitoring.md" loading="lazy"></iframe>
+            </details>
+            <details class="archive-card">
+              <summary><strong>Chief Engineer</strong><span>docs/shipbook/departments/chief-engineer.md</span></summary>
+              <iframe title="Chief Engineer Manual" src="../shipbook/departments/chief-engineer.md" loading="lazy"></iframe>
+            </details>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Manual hierarchy</p><h2>One ship truth, role-specific reading depth</h2></div>
+            <p class="section-note">The Captain carries the whole ship. Officers carry the shared standard plus their own department book and contact map.</p>
+          </div>
+          <div class="notice"><strong>Truth boundary:</strong> a documented contact route is not proof that transport, authorization, wake, or return is runtime-enforced. Every current route in the registry is explicitly marked <code>runtime_enforced: false</code> until its acceptance gate passes.</div>
+          <div class="route-grid">
+            <div class="route search-item" data-status="AS-BUILT"><div class="number">01 / HUMAN</div><h3><a href="../system/ship-manual.md">Canonical Ship Manual</a></h3><div class="rank">Whole-system source</div><p>Mission, command, doctrine, seats, personal cells, factory, memory, governance, incident response, Computer, graph, and build state.</p><p class="boundary">The HTML page is a companion view; this Markdown source carries the operational text.</p></div>
+            <div class="route search-item" data-status="AS-BUILT"><div class="number">02 / CAPTAIN</div><h3><a href="../shipbook/shipbook-captain.md">Captain's Shipbook</a></h3><div class="rank">Generated complete volume</div><p>Embeds the whole-ship Manual, shared officer standard, and every department book byte-for-byte. The cockpit reads its verified index and bounded sections through <code>ship.knowledge</code>.</p><p class="boundary">Must be regenerated and freshness-checked whenever any embedded source changes.</p></div>
+            <div class="route search-item" data-status="AS-BUILT"><div class="number">03 / OFFICER</div><h3><a href="../shipbook/shared/officer-operating-standard.md">Officer Operating Standard</a></h3><div class="rank">Shared baseline</div><p>Rank, command boundaries, personal Thinking/Operations/Engineering cells, boards, evidence duties, failure handling, and common routes.</p><p class="boundary">Department books narrow this baseline; they do not override command authority.</p></div>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Department library</p><h2>Every commissioned line has its own book</h2></div>
+            <p class="section-note">Each book names who the officer can contact, why, through which route, and whether that route is built, configured, target, or unenforced.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Rank / department</th><th>Manual</th><th>Primary command route</th><th>Personal cell</th><th>Current truth</th></tr></thead>
+              <tbody>
+                <tr class="search-item" data-status="AS-BUILT TARGET"><td><strong>Commander / No1 command floor</strong></td><td><a href="../shipbook/departments/no1-command-floor.md">No1 Department Book</a></td><td>Captain -> No1; No1 runs the floor</td><td>Advisor + PA + Personal Engineer</td><td>Legacy floor exists; locked Commander handoff is target</td></tr>
+                <tr class="search-item" data-status="AS-BUILT TARGET"><td><strong>Lieutenant Commander / Science</strong></td><td><a href="../shipbook/departments/science.md">Science Department Book</a></td><td>Captain direct commission; ordinary tasking via No1</td><td>Advisor + PA + Personal Engineer</td><td>Legacy No2/board exists; full hours-to-days department is target</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET"><td><strong>Lieutenant Commander / Intelligence</strong></td><td><a href="../shipbook/departments/intelligence.md">Intelligence Department Book</a></td><td>No1; direct Captain escalation for named intelligence</td><td>Advisor + PA + Personal Engineer</td><td>Configured boundary; locked seat and crew are target</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET"><td><strong>Lieutenant Commander / Security</strong></td><td><a href="../shipbook/departments/security.md">Security Department Book</a></td><td>No1; direct Captain incident line</td><td>Advisor + PA + Personal Engineer</td><td>Governance instruments exist outside an unmanned seat</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET"><td><strong>Lieutenant Commander / Operations</strong></td><td><a href="../shipbook/departments/operations.md">Operations Department Book</a></td><td>No1; grant/custody decisions remain scoped</td><td>Advisor + PA + Personal Engineer</td><td>Spend registry exists; commissioned seat is unmanned</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET"><td><strong>Lieutenant Commander / Communications</strong></td><td><a href="../shipbook/departments/communications.md">Communications Department Book</a></td><td>No1 with named direct-output carve-outs</td><td>Advisor + PA + Personal Engineer</td><td>Department is target; no live route implied</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET"><td><strong>Lieutenant Commander / Tactical</strong></td><td><a href="../shipbook/departments/tactical.md">Tactical Department Book</a></td><td>No1; options return to Captain for decision</td><td>Advisor + PA + Personal Engineer</td><td>Deferred until Ops and Security controls are manned</td></tr>
+                <tr class="search-item" data-status="AS-BUILT TARGET"><td><strong>Lieutenant Commander / Counsellor</strong></td><td><a href="../shipbook/departments/counsellor.md">Counsellor Department Book</a></td><td>No1; serious intervention may reach Captain directly</td><td>Advisor + PA + Personal Engineer</td><td>Legacy Doctor exists; locked S5 seat is target</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET UNVERIFIED"><td><strong>Lieutenant Commander / Monitoring</strong></td><td><a href="../shipbook/departments/monitoring.md">Monitoring Department Book</a></td><td>Independent evidence path to Captain/Commodore</td><td>Advisor + PA + Personal Engineer</td><td>CMO naming and authority conflict remains visible</td></tr>
+                <tr class="search-item" data-status="CONFIGURED TARGET UNVERIFIED"><td><strong>Lieutenant Commander / Chief Engineer</strong></td><td><a href="../shipbook/departments/chief-engineer.md">Chief Engineer Department Book</a></td><td>Captain direct; logged route to external Incubator PM</td><td>Advisor + PA + Personal Engineer</td><td>Incubator exists; ship officer and typed interface are unmanned/unproven</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="band">
+          <div class="section-head">
+            <div><p class="section-kicker">Machine-readable contacts</p><h2>Contact purpose, route, and enforcement state</h2></div>
+            <p class="section-note">The registry is the current design map; runtime authorization remains a separate build obligation.</p>
+          </div>
+          <div class="split">
+            <div class="search-item" data-status="AS-BUILT UNVERIFIED">
+              <h3><a href="../../config/ship-officer-routes.json">Officer route registry</a></h3>
+              <ul>
+                <li>Twenty officer-to-officer routes plus three personal-staff routes.</li>
+                <li>Unique route IDs, named direction, purpose, authority, and implementation note.</li>
+                <li>Every route explicitly declares <code>runtime_enforced: false</code>.</li>
+                <li>Sibling officers default through No1 unless a ratified direct route says otherwise.</li>
+              </ul>
+            </div>
+            <div class="search-item" data-status="TARGET">
+              <h3>Runtime acceptance still required</h3>
+              <ul>
+                <li>Authenticated sender and target identity.</li>
+                <li>Typed authority and scope validation.</li>
+                <li>Durable delivery, wake, acknowledgement, and correlated return.</li>
+                <li>Visible denial, timeout, retry, escalation, and revocation behavior.</li>
+                <li>Ship Computer provenance without exposing private cognition.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="band alt">
+          <div class="section-head">
+            <div><p class="section-kicker">Build record</p><h2>Follow what exists and what comes next</h2></div>
+            <p class="section-note">No overall completion percentage is shown because unlike capabilities do not combine into an honest scalar.</p>
+          </div>
+          <div class="route-grid">
+            <div class="route search-item" data-status="AS-BUILT"><div class="number">BUILDING</div><h3><a href="ship-building.html">Evidence-backed Building page</a></h3><div class="rank">54 claims / nine domains</div><p>Separate artifact, operational, and evidence states; critical path; dependencies; blockers; next gates; and linked proof.</p><p class="boundary">Static generated snapshot until the Ship Computer supplies authenticated projections.</p></div>
+            <div class="route search-item" data-status="AS-BUILT"><div class="number">SOURCE</div><h3><a href="../system/ship-build-register.json">Build register</a></h3><div class="rank">Machine-readable source</div><p>Validated claim IDs, status vocabulary, evidence paths, Bridge readiness requirements, and known register issues.</p><p class="boundary">Repository evidence can be recorded or verified; it is not automatically live telemetry.</p></div>
+            <div class="route search-item" data-status="TARGET"><div class="number">FUTURE BRIDGE</div><h3><a href="../design/ship-computer-bridge-frontend-plan.md">Operational product contract</a></h3><div class="rank">No selected visual</div><p>From-scratch design begins only after the external Computer, authenticated API, recovery controls, and first accepted Captain voyage exist.</p><p class="boundary">The Manual's guardian artwork is not the Bridge shell.</p></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Operational source: <a href="../system/ship-manual.md">docs/system/ship-manual.md</a></span>
+      <span>Design authority: <a href="../design/ship-org-design.md">docs/design/ship-org-design.md</a></span>
+    </footer>
+  </div>
+
+  <script>
+    const seats = [
+      {
+        id: "flag.commodore", name: "Commodore", rank: "Human flag command", status: ["AS-BUILT"],
+        authority: "Above-ship human authority. Captain reports to the Commodore.",
+        job: "Set priorities, standing missions, grants, and genuine above-Captain calls.",
+        current: "Direct human operator; no model or harness.",
+        target: "Authenticated flag channel with complete command provenance.",
+        harness: "Human console; not a model seat.",
+        tools: "Direct authenticated orders, spend authorization, relief/appointment authority under governing record.",
+        state: "Human records and sealed ship record; not an AI Brain namespace by this design.",
+        team: "Commands the Captain, not departments directly in routine operation.",
+        web: "Human-controlled.", spend: "Authorizes grants and above-Captain spend.",
+        provenance: "Authenticated flag messages, ratified decisions, grants, and seals."
+      },
+      {
+        id: "captain.canopus", name: "Canopus, Captain", rank: "Captain", status: ["AS-BUILT", "TARGET", "UNVERIFIED"],
+        authority: "Reports to Commodore; commands Shipwright and its officers.",
+        job: "Set heading, decide, decompose, issue typed orders, integrate evidence, and inform at flag level.",
+        current: "Experimental Fable 5 medium, Opus 4.8 high, or Sonnet 5 high launcher. Final command migration incomplete.",
+        target: "Bench-selected Captain model in the final locked bridge after staff and observability are live.",
+        harness: "AS-BUILT replacement-prompt Claude SDK; strict MCP; 20 typed tools; all built-ins stripped.",
+        tools: "Scratchpad/current, personal board, Captain Brain, allowlisted ship knowledge, roster, PA/Advisor/officer queues, reports.",
+        state: "Private scratchpad; captain-current; captain.sqlite; governed Captain Brain; hash-linked events.jsonl.",
+        team: "No1 + ten officer lines including Chief Engineer; target private Advisor, PA, Engineer cell.",
+        web: "No direct browser in cockpit.", spend: "$0 default; named grant on delegated work.",
+        provenance: "Native tool audit exists; complete live staff/report/landing chain remains unverified."
+      },
+      {
+        id: "no1.pm", name: "No1 / First Officer", rank: "Commander", status: ["AS-BUILT", "TARGET"],
+        authority: "Reports to Captain; runs all ship departments and owns main board authority.",
+        job: "Operate the floor, route work, maintain board truth, coordinate officers, resolve flow.",
+        current: "Opus 4.8 high, persistent headless Claude Code manager runtime, WOBS account.",
+        target: "S2 locked officer harness; bench-selected model, Sonnet 5 design default unless pinned otherwise.",
+        harness: "Current legacy manager-run with broad tools; target typed officer-only cockpit.",
+        tools: "Current manager files/shell/dispatch posture. Target packet/PA/order/seat/escalate only.",
+        state: "Ship board sole-writer role; staged routing brain; manager registry/logs.",
+        team: "All commissioned departments; target private Advisor, PA, Engineer cell.",
+        web: "Current runtime-dependent; target research through PA.", spend: "No per-seat spend object observed.",
+        provenance: "Manager logs/board current; target bridge event chain and PA ledger."
+      },
+      {
+        id: "no2.pm", name: "Science Officer / No2", rank: "Lieutenant Commander", status: ["AS-BUILT", "TARGET"],
+        authority: "Reports to Captain; commands Science department only.",
+        job: "Accept broad bounded commissions; run panels/councils/research; return evidence reports after hours or days.",
+        current: "Opus 4.8 xhigh, persistent headless Claude Code, BELFORT account; staged brain and Science board.",
+        target: "S3 locked Science officer with Sonnet-led configured research/panel department.",
+        harness: "Current legacy manager runtime; target stripped typed officer harness.",
+        tools: "Current broad manager posture. Target packet, PA, order lifecycle, authorized seat messages, escalation.",
+        state: "Science board/brain current; target PA ledger, packet, department evidence store.",
+        team: "Panel, council, Science research crews, operating department; plus private officer cell.",
+        web: "Research crews browse within grants; officer consumes sourced packet.", spend: "Named grants required.",
+        provenance: "Target source-to-report chain maps acceptance and uncertainty."
+      },
+      {
+        id: "intelligence.officer", name: "Intelligence Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "TARGET"],
+        authority: "Direct Captain call when needed; otherwise routed by No1; commands Intelligence only.",
+        job: "Recon at scale: fetch, triage, provenance-retained filing, synthesis, and fleet intelligence.",
+        current: "Captain staff endpoint exists; planned/unmanned; no proven model turn.",
+        target: "S4 locked officer with multi-tier research pyramid; model selected by role bench.",
+        harness: "Target typed officer cockpit; research workers have bounded source tools.",
+        tools: "Officer has packet/PA/order/seat/escalate. Department workers get configured fetch/source filing.",
+        state: "Target department board, intelligence corpus, source ledger, packet, officer Brain.",
+        team: "Fetch streams, keep/throw agents, tiered filing/synthesis crew; private officer cell.",
+        web: "Department browsing with provenance and injection controls.", spend: "$0 default; grant-gated fan-out.",
+        provenance: "Every source retains URL/identifier, fetch time, verbatim pointer/hash, and filing path."
+      },
+      {
+        id: "security.officer", name: "Security Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "AS-BUILT", "TARGET"],
+        authority: "Direct Captain line for security alerts; otherwise No1. Does not monitor Captain.",
+        job: "Provenance, privileges, grant registry, custody, revocation, quarantine, and rogue-watch.",
+        current: "Endpoint planned/unmanned. Some governance instruments exist outside the seat.",
+        target: "Locked Security officer and complete monitoring/custody department.",
+        harness: "Target typed officer cockpit; no ambient raw keys.",
+        tools: "Officer tools plus department-specific read-only telemetry and externally held revoke/quarantine controls.",
+        state: "Grant/provenance registries and incident evidence; target private cell and department board.",
+        team: "Security monitoring and custody staff; watched in turn by CMO; private officer cell.",
+        web: "Only through scoped department/PA routes.", spend: "Audits grants; does not self-allocate.",
+        provenance: "Direct incident evidence cannot route through the seat being reported."
+      },
+      {
+        id: "ops.officer", name: "Operations Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "AS-BUILT", "TARGET"],
+        authority: "Reports through No1; resource decisions remain under Captain/grant authority.",
+        job: "Own ship funds, crypto, servers, API keys, budgets, cost ledger, and weekly resource roll-up.",
+        current: "Endpoint planned/unmanned. Spend registry and named grants exist independently.",
+        target: "Locked officer with external revocable custody and human gate for custody-class movement.",
+        harness: "Target typed cockpit plus brokered resource controls; no ambient credential display.",
+        tools: "Officer tools; grant allocation, usage observation, canary, and custody interfaces behind typed schemas.",
+        state: "Spend/grant registry, cost ledger, server/key inventory, target board/packet/Brain.",
+        team: "Resource, cost, infrastructure, treasury specialists; private officer cell.",
+        web: "Administrative only through scoped team.", spend: "Owns allocation mechanics; cannot bypass human custody gate.",
+        provenance: "Grant, custodian, provider, units, amount/unknown, canary, and movement authorization."
+      },
+      {
+        id: "comms.officer", name: "Communications Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "TARGET"],
+        authority: "Reports through No1; owns crafted human-facing output within named carve-outs.",
+        job: "Languages, writing, creative output, glossary, final review, and one-mouth audit trail.",
+        current: "Endpoint planned/unmanned; capability-pulled until stand-up trigger.",
+        target: "Locked officer with craft department and final-gate review loop.",
+        harness: "Target typed officer cockpit; premium review slot may be configured.",
+        tools: "Officer tools; department craft/review tools. No silent interception of flag/substrate traffic.",
+        state: "Target glossary, outbound queue, review record, packet, board, Brain.",
+        team: "Language/writing/creative specialists and final reviewer; private officer cell.",
+        web: "Sourced work through PA/authorized crew.", spend: "Named grant for premium craft turns.",
+        provenance: "Draft source, transformations, reviewer/model, exceptions, final outbound artifact."
+      },
+      {
+        id: "tactical.officer", name: "Tactical Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "TARGET"],
+        authority: "Reports through No1; brings options to Captain, who decides.",
+        job: "Find ship-specific earning paths and mission tactics that fund fleet expansion.",
+        current: "Endpoint planned/unmanned; deferred until Ops and Security are manned.",
+        target: "Locked officer with opportunity-analysis department behind grant and risk controls.",
+        harness: "Target typed officer cockpit.",
+        tools: "Officer tools; analysis/simulation through department. No unilateral fund movement.",
+        state: "Target opportunity ledger, assumptions, risk/evidence packet, board, Brain.",
+        team: "Opportunity research and analysis crew; private officer cell.",
+        web: "Sourced research through authorized crews.", spend: "No execution spend without grants/Ops/custody gates.",
+        provenance: "Source, hypothesis, downside, uncertainty, option, decision, and outcome feedback."
+      },
+      {
+        id: "doctor.pm", name: "Ship's Counsellor / Doctor", rank: "Lieutenant Commander", status: ["AS-BUILT", "TARGET"],
+        authority: "Reports through No1; direct Captain escalation for serious mind-health intervention.",
+        job: "Own intervention: brain health, wellbeing, belief-delta review, treatment proposals.",
+        current: "Opus 4.8 xhigh, persistent Claude Code, BELFORT; private Doctor brain + shared ship brain.",
+        target: "S5 locked Counsellor officer and complete intervention/reach mechanics.",
+        harness: "Current legacy manager runtime; target stripped typed officer harness.",
+        tools: "Current broad posture. Target packet/PA/order/seat/escalate and bounded audit evidence.",
+        state: "Doctor brain and shared ship brain current; target intervention ledger/board/private cell.",
+        team: "Mind-health/intervention specialists; receives CMO findings; private officer cell.",
+        web: "Research through PA/Science as appropriate.", spend: "No per-seat spend object observed.",
+        provenance: "Belief-delta digest, evidence, intervention proposal, officer response, outcome."
+      },
+      {
+        id: "cmo.officer", name: "Chief Monitoring Officer", rank: "Lieutenant Commander", status: ["CONFIGURED", "TARGET", "UNVERIFIED"],
+        authority: "Direct Captain line for monitoring alerts; otherwise No1; detects but does not treat or prosecute.",
+        job: "Read whole observability surface, detect drift/defects/waste, and operate the self-learning evidence loop.",
+        current: "Endpoint planned/unmanned. Canonical design says Chief Medical Officer; registry says Monitoring.",
+        target: "S5 locked detection officer with whole-surface telemetry and Security watcher duty.",
+        harness: "Target typed officer cockpit plus read-only observability views.",
+        tools: "Officer tools; telemetry query, finding submission, audit correlation. No treatment or quarantine authority.",
+        state: "Target detection cases, telemetry pointers, board, packet, Brain, private cell.",
+        team: "Monitoring/analysis crew; watches Security; hands treatment to Counsellor and wrongdoing to Security.",
+        web: "Internal evidence-first; external research through PA/Science.", spend: "Named grant for heavy analysis.",
+        provenance: "Signal, baseline, anomaly, evidence, severity, target officer, response, resolution."
+      },
+      {
+        id: "chief-engineer", name: "Chief Engineer", rank: "Lieutenant Commander", status: ["CONFIGURED", "AS-BUILT", "TARGET", "UNVERIFIED"],
+        authority: "Reports to Captain; commands ship engineering relationship, not the external factory PM.",
+        job: "Translate ship engineering needs and speak directly to Incubator PM through logged interface.",
+        current: "Endpoint planned/unmanned. External Incubator PM/factory exists and runs today.",
+        target: "S2 locked officer with typed PM interface and complete personal staff cell.",
+        harness: "Target stripped officer cockpit; factory remains standard Claude Code machinery.",
+        tools: "Officer tools plus typed Chief Engineer-to-PM commission/report interface. No raw coding tools.",
+        state: "Target engineering portfolio/packet/board/Brain; factory owns its own boards/workspaces.",
+        team: "Direct external PM relationship; ship personal cell. Does not directly command factory managers.",
+        web: "Research through PA; factory has its own technical access.", spend: "Factory work must carry grant/budget.",
+        provenance: "Ship order -> CE translation -> PM commission -> factory dispatch/workspaces/tests -> report/landing."
+      }
+    ];
+
+    const kits = [
+      {
+        id: "advisor", name: "Personal Advisor / mini-science", rank: "Warrant Officer, non-line", status: ["TARGET"],
+        authority: "Reports only to the owning officer; no ship/department command and no review-gate status.",
+        job: "Think directly with the officer; question, compare, synthesize, challenge, refine, and orchestrate bounded Scientists.",
+        model: "Per-ship premium slot; Fable 5 or Opus 4.8 current candidates.",
+        runtime: "Replacement-prompt custom harness; no default Claude Code tools or repository workspace.",
+        tools: "packet.read; pa.ask; pa.tell; seat.message (owning officer only); escalate; scratchpad.read/write; board.list/get/add/update/depend; team.roster/assign/message/report.",
+        state: "Advisor scratchpad, advisory board, bounded packet, distinct Advisor Brain via own PA.",
+        team: "N configured Scientists plus a distinct CPO Advisor PA.",
+        web: "No raw web; Scientists/PA perform source work.",
+        spend: "$0 default; model/team turns named-grant and cost stamped.",
+        provenance: "All conversation/tool/team/source/model events in officer-scoped chain.",
+        absent: "No order.*, raw files, shell, generic agents, credentials, deployment, release, spend, or arbitrary seat routes."
+      },
+      {
+        id: "scientist", name: "Thinking partner", rank: "Ensign rank / Scientist non-line support designation", status: ["TARGET"],
+        authority: "Reports only to owning Advisor; cannot contact ship command independently.",
+        job: "Perform one bounded thinking or research assignment and submit sourced findings with uncertainty.",
+        model: "Per-ship configured slot; Opus/Fable/GLM/Terra are candidates, not rank or doctrine.",
+        runtime: "Small custom harness with replacement assignment commission.",
+        tools: "scratchpad.read; scratchpad.write; web.search; web.fetch; source.record; finding.submit; team.message.",
+        state: "Per-assignment scratchpad, source ledger, finding packet.",
+        team: "No subordinates.", web: "Bounded search/fetch with provenance and injection handling.",
+        spend: "No ambient spend; grant reference and cost/model stamp per paid run.",
+        provenance: "Assignment, model/effort, queries, source IDs, fetch time, citations, result, uncertainty.",
+        absent: "No command, order, ops, project files, shell, deploy, credentials, project boards, or release."
+      },
+      {
+        id: "pa", name: "Officer Personal Assistant / mini-ops", rank: "Chief Petty Officer", status: ["TARGET"],
+        authority: "Reports to exactly one owning officer; operational hands without decision authority.",
+        job: "Run recall, records, commitments, people/projects, scheduling, context, packets, ledgers, memory maintenance, and administration.",
+        model: "Sonnet 5 design default.",
+        runtime: "Plain Claude Code with scoped commission, one officer workspace, and one human-brain namespace.",
+        tools: "Own pa.ask/pa.tell lane; own inbox/packet/ledger; own human-brain search/get/stage/ratified-commit; own board transcription; own commitments/people/projects/schedule; private specialist dispatch; scoped artifacts; landing request. Final wire schemas remain to build.",
+        state: "Officer ledger, packet, dictated domain board, one officer-scoped human-brain based on falcon-brain.",
+        team: "Configured Petty Officer/specialist records, scheduling, sourced research, and admin crew.",
+        web: "Through scoped research specialists; no ambient credentials.",
+        spend: "$0 default; named grant for metered work.",
+        provenance: "Source/dictation, exact brain delta, ratification, event/cost/model stamps, landing request/result.",
+        absent: "No cross-officer Brain/board/ledger writes, registry/grant mutation, credentials, harness/config, command issuance, acceptance, direct foreign-worker routing, main-copy write, or direct landing."
+      },
+      {
+        id: "advisor-pa", name: "Advisor's Personal Assistant", rank: "Chief Petty Officer", status: ["AS-BUILT", "TARGET"],
+        authority: "Reports only to one Advisor; separate from the owning officer's PA.",
+        job: "Maintain Advisor recall, records, packet, ledger, Brain, scheduling, and bounded administration.",
+        model: "Current Meridian PA: Sonnet 5 plain Claude Code.",
+        runtime: "Current own bridge-advisor-pa workspace with narrow write allowlist; target repeated per Advisor.",
+        tools: "Current scoped ledger, packet, bridge records, Advisor Brain CLI, exact assigned review artifacts.",
+        state: "Current brain-advisor.captain, Advisor packet/ledger; target one separate namespace per Advisor.",
+        team: "May direct Advisor-scoped admin/research specialists in target design.",
+        web: "Only as scoped by commission/grant.", spend: "Current cost entries may be blocked-no-data; target named grants.",
+        provenance: "Current separate ledger/packet and seal evidence.",
+        absent: "Never writes owning officer Brain/board, other ledgers, registry, credentials, or harness."
+      },
+      {
+        id: "personal-engineer", name: "Personal Engineer / mini-engineering", rank: "Lieutenant", status: ["TARGET"],
+        authority: "Reports to one owning officer; manages personal tooling only; broad work goes to Chief Engineer.",
+        job: "Design, decompose, dispatch, review, test, loop, and submit a candidate through isolated workers.",
+        model: "Default Claude Code Opus 4.8 high.",
+        runtime: "Adapted Incubator dev-manager pattern; standard harness in officer-namespaced engineering workspace.",
+        tools: "Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch in own workspace; manager board and worker dispatch.",
+        state: "Own officer workspace, board, queue, records, grants; candidate change IDs.",
+        team: "One or more fresh gpt-5.5 high Codex Ensigns, each in one isolated jj workspace.",
+        web: "Full technical web for APIs/packages/docs/diagnosis; broad evidence research through PA.",
+        spend: "$0 default; officer-scoped named grant for paid tools/API.",
+        provenance: "Order, decomposition, dispatch/workspace/model, files, tests, review loops, candidate, broker result.",
+        absent: "No default-working-copy write, direct landing, ship-wide project ownership, or bridge command."
+      },
+      {
+        id: "codex-ensign", name: "Personal engineering worker", rank: "Ensign", status: ["TARGET"],
+        authority: "Reports to one personal engineer for one bounded assignment; no persistence-based authority.",
+        job: "Implement one code box, run required checks, and report every file changed and remaining risk.",
+        model: "gpt-5.5 high Codex default target.",
+        runtime: "Fresh ephemeral Codex process in one isolated jj workspace.",
+        tools: "Workspace-scoped code and shell tools; network only when dispatch grants it.",
+        state: "Bounded kickoff, workspace, process log, result; no personal Brain.",
+        team: "No subordinates.", web: "Dispatch-scoped network only.", spend: "Charged to parent engineer/order grant.",
+        provenance: "Worker/model/effort, workspace/base, commands, files, tests, result.",
+        absent: "No board authority, landing, direct officer contact, persistent memory, or command."
+      }
+    ];
+
+    const managers = [
+      ["manager.dev", "Opus 4.8 high / persistent Claude Code", "Code decomposition, isolated builds, review, integration", "worker.coder + craft workers by brief", "Local floor; personal engineer target adapts this manager pattern"],
+      ["manager.devops", "Opus 4.8 high / persistent", "Infrastructure and operations", "worker.sysadmin", "Dangerous actions retain human checkpoint"],
+      ["manager.graphics", "Opus 4.8 high / persistent", "Generative media and credit governance", "worker.higgsfield", "Dedicated model/credit path"],
+      ["manager.frontend", "Opus 4.8 high / persistent", "UI campaign and visual judgment", "worker.frontend", "Manager judges renders; worker implements"],
+      ["manager.design", "Opus 4.8 high / persistent", "Design/code feasibility review", "worker.design", "Check-only worker"],
+      ["manager.doc", "Opus 4.8 high / persistent", "Documentation ownership", "No standard worker", "Configured local department"],
+      ["manager.product", "Opus 4.8 high / persistent", "Product shaping and requirements", "No standard worker", "Configured local department"],
+      ["manager.qc", "Opus 4.8 high / persistent", "Parallel test design and adjudication", "worker.qc", "Workers test; manager judges"],
+      ["manager.panel", "Opus 4.8 high / persistent", "Fixed eight-seat panel and convergence map", "Panel runner, not worker-run", "Legacy/local; target panel ownership moves under Science"],
+      ["manager.bug", "Opus 4.8 high / persistent", "Bug intake, reproduction, root cause, fix design", "No standard worker", "Designs fixes; does not implement them"]
+    ];
+
+    const workers = [
+      ["worker.coder", "gpt-5.5 high / fast ephemeral Codex", "Isolated workspace-write + network", "General code implementation", "Returns full files-changed list; never lands"],
+      ["worker.opus", "Opus 4.8 high / ephemeral Claude Code", "Build workspace; no jj control", "Craft, writing, prompts, role texts, selected UX", "Manager owns integration and render check"],
+      ["worker.frontend", "gpt-5.5 high / ephemeral Codex", "Isolated workspace-write + network", "UI implementation", "Does not claim visual verification"],
+      ["worker.design", "gpt-5.5 high / ephemeral Codex", "Read/check posture; no edits or jj", "Feasibility and integration check", "Check only"],
+      ["worker.qc", "Haiku 4.5 high; Sonnet 5 escalation", "One bounded test workspace", "Execute one test and report evidence", "Never fixes code or judges release"],
+      ["worker.higgsfield", "Opus 4.8 high / ephemeral Claude Code", "Scoped media CLI + credit ceiling", "Image, video, audio, 3D generation", "Manager controls model/credit scope"],
+      ["worker.sysadmin", "gpt-5.5 high / ephemeral Codex", "Danger-full-access for infrastructure", "Services, SSH, servers, databases", "Destructive actions require human checkpoint"]
+    ];
+
+    const readiness = [
+      ["S1a", "AS-BUILT", "Locked transport", "Replacement prompt, stripped tools, model/effort pins proven."],
+      ["S1b", "AS-BUILT", "Ghost officer", "Transport exercised without granting operational authority."],
+      ["S1c", "AS-BUILT", "Meridian + Advisor PA", "Five-tool locked seat, separate PA/Brain, first sealed deliberation."],
+      ["DOGFOOD", "AS-BUILT UNVERIFIED", "Experimental Captain cockpit", "Three launchers and 20 tools exist; full live staff/report/landing watch is unverified."],
+      ["ADVISOR", "TARGET", "Synchronous Meridian", "Auto-wake, resume, follow-ups, Advisor board, Scientist team."],
+      ["KIT", "TARGET", "Repeatable personal staff cell", "Per-officer Advisor/Scientists, PA/human-brain, Engineer/Ensigns."],
+      ["S1d", "TARGET", "Sonnet Ultra officer proof", "Pending according to the adjudicated design."],
+      ["S2", "TARGET", "No1 + Chief Engineer", "Locked No1, CE seat, logged Incubator PM interface, kit template."],
+      ["S3", "TARGET", "Science", "Hours/days evidence pipeline, panel/council ownership."],
+      ["S4", "TARGET", "Intelligence", "Recon pyramid and source/provenance pipeline."],
+      ["S5", "TARGET UNVERIFIED", "Counsellor + CMO", "Intervention/detection split; canonical CMO name needs normalization."],
+      ["TRIGGER", "CONFIGURED TARGET", "Comms + Tactical", "Endpoints exist; stand-up depends on capability and Ops/Security readiness."],
+      ["LAND", "TARGET UNVERIFIED", "Single landing broker", "Identity, custody, queue, conflict policy, and failover not yet implemented."],
+      ["COMPUTER", "TARGET UNVERIFIED", "Ship Computer", "Not built: accepted Codex frontend package, external append-only state, redaction/correlation, Bridge API, live feed, history, and operational map."],
+      ["GRAPH", "TARGET UNVERIFIED", "Command Graph", "Not built: authority-to-acceptance ledger, parent enforcement, Standing Order/Mission/Epic/Task views, and route correlations."],
+      ["S6", "TARGET", "Final Captain migration", "Command moves last after staff, control, and observability are proven."]
+    ];
+
+    const statusClass = {
+      "AS-BUILT": "as-built",
+      "CONFIGURED": "configured",
+      "TARGET": "target",
+      "UNVERIFIED": "unverified"
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function badge(label) {
+      return `<span class="badge ${statusClass[label]}">${label}</span>`;
+    }
+
+    function renderSeats() {
+      const fields = [
+        ["Authority / reports", "authority"], ["Job", "job"], ["Current", "current"], ["Target", "target"],
+        ["Harness", "harness"], ["Tools / access", "tools"], ["State / board / memory", "state"], ["Subordinate team", "team"],
+        ["Web", "web"], ["Spend / grants", "spend"], ["Provenance", "provenance"]
+      ];
+      document.querySelector("#seat-list").innerHTML = seats.map((seat) => `
+        <article class="seat search-item" data-status="${seat.status.join(" ")}">
+          <div class="record-head">
+            <div><div class="seat-name"><h3>${escapeHtml(seat.name)}</h3><span class="seat-id">${escapeHtml(seat.id)}</span></div><div class="rank-line">${escapeHtml(seat.rank)}</div></div>
+            <div class="badges">${seat.status.map(badge).join("")}</div>
+          </div>
+          <div class="seat-grid">
+            ${fields.map(([label, key]) => `<div class="datum"><span class="label">${label}</span><div class="value">${escapeHtml(seat[key])}</div></div>`).join("")}
+          </div>
+        </article>`).join("");
+    }
+
+    function renderKits() {
+      const fields = [
+        ["Authority / reports", "authority"], ["Job", "job"], ["Model", "model"], ["Runtime / harness", "runtime"],
+        ["Exact tools / access", "tools"], ["State / board / memory", "state"], ["Subordinate team", "team"], ["Web", "web"],
+        ["Spend / grants", "spend"], ["Provenance", "provenance"], ["Explicitly absent", "absent"]
+      ];
+      document.querySelector("#kit-list").innerHTML = kits.map((kit) => `
+        <article class="kit-record search-item" data-status="${kit.status.join(" ")}">
+          <div class="record-head">
+            <div><div class="seat-name"><h3>${escapeHtml(kit.name)}</h3><span class="seat-id">${escapeHtml(kit.id)}</span></div><div class="rank-line">${escapeHtml(kit.rank)}</div></div>
+            <div class="badges">${kit.status.map(badge).join("")}</div>
+          </div>
+          <div class="seat-grid">
+            ${fields.map(([label, key]) => `<div class="datum"><span class="label">${label}</span><div class="value">${escapeHtml(kit[key])}</div></div>`).join("")}
+          </div>
+        </article>`).join("");
+    }
+
+    function renderTableRows(selector, rows, status) {
+      const body = document.querySelector(`${selector} tbody`);
+      body.innerHTML = rows.map((row) => `<tr class="search-item" data-status="${status}">${row.map((cell, index) => `<td>${index === 0 ? `<strong><code>${escapeHtml(cell)}</code></strong>` : escapeHtml(cell)}</td>`).join("")}</tr>`).join("");
+    }
+
+    function renderTimeline() {
+      document.querySelector("#timeline").innerHTML = readiness.map(([slice, statuses, name, detail]) => {
+        const labels = statuses.split(" ").reduce((result, word, index, list) => {
+          if (word === "AS-BUILT") result.push("AS-BUILT");
+          else if (["CONFIGURED", "TARGET", "UNVERIFIED"].includes(word)) result.push(word);
+          return result;
+        }, []);
+        return `<div class="timeline-row search-item" data-status="${labels.join(" ")}"><code>${escapeHtml(slice)}</code><div><div class="slice">${escapeHtml(name)}</div><div class="badges" style="justify-content:flex-start;margin-top:5px">${labels.map(badge).join("")}</div></div><p>${escapeHtml(detail)}</p></div>`;
+      }).join("");
+    }
+
+    renderSeats();
+    renderKits();
+    renderTableRows("#manager-table", managers, "AS-BUILT CONFIGURED");
+    renderTableRows("#worker-table", workers, "AS-BUILT CONFIGURED");
+    renderTimeline();
+
+    let activeStatus = "ALL";
+    let activeTab = "overview";
+
+    function applyFilters() {
+      const query = document.querySelector("#search").value.trim().toLowerCase();
+      const activeView = document.querySelector(`[data-view="${activeTab}"]`);
+      const items = [...activeView.querySelectorAll(".search-item")];
+      for (const item of items) {
+        const statusMatch = activeStatus === "ALL" || item.dataset.status.split(" ").includes(activeStatus);
+        const textMatch = !query || item.textContent.toLowerCase().includes(query);
+        item.classList.toggle("hidden-by-filter", !(statusMatch && textMatch));
+      }
+      const visible = items.filter((item) => !item.classList.contains("hidden-by-filter"));
+      activeView.classList.toggle("no-results", items.length > 0 && visible.length === 0);
+    }
+
+    document.querySelector("#search").addEventListener("input", applyFilters);
+
+    document.querySelectorAll(".filter-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeStatus = button.dataset.filter;
+        document.querySelectorAll(".filter-button").forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeTab = button.dataset.tab;
+        document.querySelectorAll(".tab-button").forEach((candidate) => {
+          const selected = candidate === button;
+          candidate.classList.toggle("active", selected);
+          candidate.setAttribute("aria-selected", String(selected));
+        });
+        document.querySelectorAll(".view").forEach((view) => { view.hidden = view.dataset.view !== activeTab; });
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: "auto" });
+      });
+    });
+  </script>
+</body>
+</html>
